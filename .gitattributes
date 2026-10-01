@@ -1,0 +1,25 @@
+# Quebras de linha: LF no repositório, em qualquer sistema operacional.
+#
+# Antes disto o repositório convivia com dois estilos — README.md e
+# electron-builder.yml gravados em CRLF, todo o resto em LF. O efeito não era
+# estético: qualquer ferramenta que reescrevesse um arquivo inteiro trocava as
+# quebras junto, e o git passava a ver o arquivo todo como modificado. Num
+# commit real isso apareceu como 1.535 linhas alteradas no lugar de 317 — a
+# mudança de verdade ficava enterrada sob milhares de linhas idênticas, e
+# `git blame` e revisão de código perdiam o sentido.
+#
+# `text=auto` deixa o git detectar o que é texto; `eol=lf` fixa o que vai
+# gravado no repositório. Na área de trabalho do Windows os arquivos continuam
+# funcionando normalmente — editores e o Node lidam com LF sem reclamar.
+* text=auto eol=lf
+
+# Binários: nunca converter. `text=auto` já detectaria a maioria, mas ser
+# explícito evita que um arquivo com cabeçalho enganoso seja corrompido.
+*.png  binary
+*.ico  binary
+*.wav  binary
+*.exe  binary
+*.appx binary
+*.msix binary
+*.pfx  binary
+*.p12  binary
