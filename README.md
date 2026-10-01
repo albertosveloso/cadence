@@ -183,9 +183,10 @@ Duas armadilhas que valem estar escritas:
 
 `site/` é um site estático com a documentação do usuário final, a identidade visual e o botão de
 download do instalador. Sem build e sem dependências — são arquivos prontos para subir em qualquer
-hospedagem estática. O instalador **não** faz parte do site: é hospedado à parte no Google Drive,
-e o `index.html` sai do repositório com um marcador no lugar da URL. Como montar o link direto do
-Drive, publicar e o que trocar a cada versão estão em [`site/README.md`](site/README.md).
+hospedagem estática. O instalador **não** faz parte do site: é distribuído como asset de uma
+release deste repositório, e os botões de download apontam para a URL versionada da release. O
+que publicar, o que trocar a cada versão e as condições que sustentam esse link estão em
+[`site/README.md`](site/README.md).
 
 O conteúdo é o mesmo de [`MANUAL.md`](MANUAL.md); as cores são os tokens de
 `src/renderer/src/index.css` convertidos por `scripts/listar-cores.mjs`.

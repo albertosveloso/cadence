@@ -14,9 +14,8 @@ site/
     tela-calendario.png
 ```
 
-O instalador **não** faz parte do site — ele é hospedado à parte, no Google Drive.
-Pesado, o site tem cerca de 110 KB, então sobe em qualquer host, inclusive GitHub Pages e
-Cloudflare Pages.
+O instalador **não** faz parte do site — ele é distribuído como asset de uma release no
+GitHub. Por isso o site inteiro tem cerca de 116 KB e sobe em qualquer host estático.
 
 ---
 
@@ -25,43 +24,33 @@ Cloudflare Pages.
 Já está aplicado nos dois botões do `index.html`:
 
 ```
-https://drive.usercontent.google.com/download?id=1nfWeaETa3ZKIQuvm7omKkOi_aBX3jB_o&export=download&confirm=t
+https://github.com/albertosveloso/cadence/releases/download/0.1.0/Cadence-Setup-0.1.0.exe
 ```
 
-Verificado anonimamente, sem sessão do Google, com curl e com user-agent de navegador:
-HTTP 206, `Content-Type: application/octet-stream`,
-`Content-Disposition: attachment; filename="Cadence-Setup-0.1.0.exe"`,
-`Content-Range: .../95741868` e os bytes iniciais `MZ` de executável — ou seja, o arquivo, e
-não a página de visualização. O SHA-256 do arquivo publicado é
+O instalador é um **asset da release `0.1.0`** do próprio repositório. Verificado anonimamente,
+sem sessão do GitHub e com user-agent de navegador: `302` para o CDN e depois `206` com
+`Content-Type: application/octet-stream`,
+`Content-Disposition: attachment; filename=Cadence-Setup-0.1.0.exe`,
+`Content-Range: .../95741868` e os bytes iniciais `MZ` de executável. O SHA-256 do arquivo é
 `d81b388bffcbc9bbe7951c050dcae03f73a0bbb896e2ff210b5720c96f312900`.
 
-### Como montar essa URL para uma versão futura
+Três condições sustentam esse link, e vale conhecê-las antes de mexer:
 
-O link que o Drive oferece em "Compartilhar" **não serve**: ele abre a página de visualização.
+- **O repositório precisa continuar público.** Assets de release em repositório privado exigem
+  autenticação, e o botão passaria a devolver uma página de login.
+- **A URL é imutável por versão.** O caminho carrega a tag (`0.1.0`) e o nome do arquivo, então
+  ele nunca aponta para outro binário — o que é exatamente o que se quer num link de download.
+- **A tag não pode ser reaproveitada.** Apagar e recriar a release `0.1.0` com outro arquivo
+  tornaria o link mentiroso para quem já o tem.
 
-1. Suba o `.exe` e, em **Compartilhar → Acesso geral**, escolha **Qualquer pessoa com o link**
-   como *Leitor*. Sem isso, quem não estiver logado na sua conta recebe "acesso negado".
-2. Copie o link e tire o ID do meio dele:
+> A release está marcada como **pré-lançamento**. O download funciona normalmente, mas ela não
+> aparece como "Latest release" na página do repositório, e `releases/latest/download/...` não
+> resolve para ela. Se quiser que apareça, desmarque "Set as a pre-release" na edição da release.
 
-   ```
-   https://drive.google.com/file/d/1nfWeaETa3ZKIQuvm7omKkOi_aBX3jB_o/view?usp=sharing
-                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  o ID
-   ```
+### Ao publicar uma versão nova
 
-3. Monte: `https://drive.usercontent.google.com/download?id=SEU_ID&export=download&confirm=t`
-4. **Teste numa janela anônima.** Se um dia parar de baixar direto, abra o link de
-   compartilhamento, clique em "Fazer download mesmo assim" e copie o destino desse botão.
-
-### Sobre o aviso de varredura do Drive
-
-O antivírus do Drive só varre arquivos de até **100 MB**; acima disso ele mostra a página
-*"Não foi possível verificar se este arquivo contém vírus"* antes de liberar o download, e isso
-não é configurável nem pelo dono do arquivo.
-
-O instalador tem **91 MB**, abaixo do limite — e o teste confirmou que o aviso não aparece. Por
-isso o site **não** menciona esse aviso. Se uma versão futura passar de 100 MB, o aviso volta e
-convém recolocar uma frase no passo 1 da seção **Instalar**, avisando o cliente antes que ele
-desista do download.
+1. Crie a release com a tag da versão (ex.: `0.2.0`) e anexe o `dist/Cadence-Setup-0.2.0.exe`.
+2. Troque as **duas** URLs no `index.html` — a tag e o nome do arquivo mudam.
 
 ---
 
@@ -80,7 +69,7 @@ Declarar um comando de build vazio é diferente de declarar um comando que não 
 insistir num campo obrigatório, use `echo ok`.
 
 O `.gitignore` do projeto já exclui `dist/`, `out/` e `node_modules/`, então o repositório sobe
-leve: o site inteiro tem cerca de 116 KB e o instalador fica no Google Drive, fora do Git.
+leve: o site inteiro tem cerca de 116 KB e o instalador vive como asset de release, fora do Git.
 
 Serve em qualquer host estático ligado ao repositório — GitHub Pages, Netlify, Vercel,
 Cloudflare Pages — ou por FTP, copiando `site/` para a pasta pública do servidor.
@@ -93,11 +82,11 @@ Cloudflare Pages — ou por FTP, copiando `site/` para a pasta pública do servi
 
 ## 3. Ao lançar uma versão nova
 
-1. Suba o instalador novo para o Drive e troque as **duas** URLs de download no `index.html`.
-2. Atualize o nome do arquivo no passo 1 de **Instalar**:
+1. Crie a release no GitHub com a tag da versão e anexe o instalador — ver a seção 1.
+2. Troque as **duas** URLs de download no `index.html`.
+3. Atualize o nome do arquivo no passo 1 de **Instalar**:
    `<code>Cadence-Setup-0.1.0.exe</code>`.
-3. Atualize `Versão 0.1.0 · 91 MB` abaixo dos botões da capa, e o `0.1.0` do rodapé.
-4. Confira se o arquivo novo continua abaixo de 100 MB — ver a seção acima.
+4. Atualize `Versão 0.1.0 · 91 MB` abaixo dos botões da capa, e o `0.1.0` do rodapé.
 
 ---
 
