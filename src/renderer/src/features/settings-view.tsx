@@ -333,12 +333,31 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
 
             <Separator className="my-1" />
 
-            <ToggleRow
-              label="Iniciar com o Windows"
-              hint="O app sobe direto para a bandeja, sem abrir janela."
-              checked={settings.openAtLogin}
-              onCheckedChange={(value) => void window.cadence.system.setOpenAtLogin(value)}
-            />
+            {/* Na versao da Microsoft Store quem liga e desliga a
+                inicializacao e o proprio Windows, nao o app -- a extensao
+                windows.startupTask do manifesto aparece em Configuracoes do
+                Windows. Mostrar um switch aqui seria oferecer um controle
+                incapaz de mudar o que afirma. */}
+            {snapshot.msix ? (
+              <div className="flex items-center justify-between gap-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="text-foreground text-[14px] leading-tight font-medium">
+                    Iniciar com o Windows
+                  </p>
+                  <p className="text-muted-foreground mt-0.5 text-[11px] leading-snug">
+                    Nesta versão quem controla é o Windows: Configurações &rsaquo; Aplicativos
+                    &rsaquo; Inicializar.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <ToggleRow
+                label="Iniciar com o Windows"
+                hint="O app sobe direto para a bandeja, sem abrir janela."
+                checked={settings.openAtLogin}
+                onCheckedChange={(value) => void window.cadence.system.setOpenAtLogin(value)}
+              />
+            )}
           </TabsContent>
         </div>
       </Tabs>

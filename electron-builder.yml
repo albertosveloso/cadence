@@ -65,6 +65,43 @@ win:
       - sha256
     rfc3161TimeStampServer: http://timestamp.digicert.com
 
+# ---------------------------------------------------------------------------
+# Pacote MSIX (Microsoft Store).
+#
+# NAO esta em `win.target` de proposito. Listado ali, `npm run dist`
+# reconstruiria tambem o instalador NSIS -- e o .exe atual e o que esta
+# publicado na release do GitHub, com hash conhecido. O MSIX sai por
+# `npm run dist:msix`, que passa o alvo pela linha de comando.
+#
+# identityName e publisher sao PROVISORIOS. Os valores definitivos sao
+# atribuidos pelo Partner Center na pagina de identidade do app e precisam
+# bater caractere a caractere, senao a submissao e recusada.
+appx:
+  identityName: VPixel.Cadence
+  publisher: CN=VPixel
+  publisherDisplayName: VPixel
+  applicationId: Cadence
+  displayName: Cadence
+  backgroundColor: '#191A1C'
+  languages:
+    - pt-BR
+    - en-US
+  # Nome do artefato sem espacos: o padrao sairia "Cadence 0.1.0.appx", que
+  # complica upload, URL e linha de comando sem nenhum ganho.
+  artifactName: ${productName}-${version}.${ext}
+
+  # A extensao windows.startupTask e o motivo de o MSIX precisar de cuidado:
+  # sob MSIX a chave Run e virtualizada e a inicializacao automatica nao
+  # acontece -- ver src/main/packaging.ts.
+  #
+  # Fica em `false` de proposito. A extensao que o electron-builder geraria
+  # traz TaskId="SlackStartup" fixo no codigo da ferramenta; declaramos a nossa
+  # em build/appx-extensions.xml, que explica o caso em detalhe.
+  addAutoLaunchExtension: false
+  customExtensionsPath: build/appx-extensions.xml
+  # O anel ja identifica o app; o nome sobreposto so suja o tile.
+  showNameOnTiles: false
+
 nsis:
   # Remove a chave de autostart na desinstalacao. Sem isso o Windows tenta
   # lancar um executavel apagado a cada boot -- ver build/installer.nsh.

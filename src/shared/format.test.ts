@@ -30,6 +30,7 @@ function snapshot(overrides: Partial<Snapshot> = {}): Snapshot {
     water: { status: 'waiting', remainingMs: 55 * MINUTE },
     settings: DEFAULT_SETTINGS,
     darkMode: true,
+    msix: false,
     ...overrides
   }
 }

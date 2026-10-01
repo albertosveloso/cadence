@@ -1,0 +1,20 @@
+<!--
+  Inicializacao automatica do Cadence no Windows (secao 5.4).
+
+  Declarada aqui, e nao por `appx.addAutoLaunchExtension`, porque a extensao
+  que o electron-builder geraria traz um identificador de tarefa fixo no
+  codigo da ferramenta, herdado de outro produto. O caso esta descrito em
+  electron-builder.yml.
+
+  TaskId e o identificador estavel da tarefa: nao mude depois de publicar.
+  Executable precisa bater com o <Application Executable> gerado a partir do
+  productName; hoje, app\Cadence.exe. Nada valida essa correspondencia em
+  tempo de build.
+
+  Atencao ao editar: isto e anexado cru ao AppxManifest.xml. Dois hifens
+  seguidos dentro de um comentario tornam o manifesto invalido, e o erro do
+  MakeAppx (0x80080204) nao diz qual linha causou.
+-->
+<desktop:Extension Category="windows.startupTask" Executable="app\Cadence.exe" EntryPoint="Windows.FullTrustApplication">
+  <desktop:StartupTask TaskId="CadenceStartup" Enabled="true" DisplayName="Cadence" />
+</desktop:Extension>

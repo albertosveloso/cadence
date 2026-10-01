@@ -120,6 +120,14 @@ export interface Snapshot {
   settings: Settings
   /** Resolucao final do tema; o renderer aplica sem decidir. */
   darkMode: boolean
+  /**
+   * true quando o app roda a partir de um pacote MSIX (Microsoft Store).
+   *
+   * A interface precisa saber: sob MSIX quem liga e desliga a inicializacao
+   * automatica e o Windows, nao o app -- e um switch que nao consegue mudar
+   * nada e pior que nenhum switch.
+   */
+  msix: boolean
 }
 
 // -------------------------------------------------------------------- Canais IPC

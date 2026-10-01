@@ -179,6 +179,47 @@ Duas armadilhas que valem estar escritas:
 
 ---
 
+## Pacote MSIX (Microsoft Store)
+
+```bash
+npm run dist:msix     # dist/Cadence-0.1.0.appx — 132,8 MB
+```
+
+O alvo `appx` **não** está em `win.target`, de propósito: listado ali, `npm run dist` reconstruiria também o instalador NSIS, e o `.exe` atual é o que está publicado na release, com hash conhecido. O MSIX sai por um script próprio, que passa o alvo pela linha de comando.
+
+### MSIX não é o mesmo app empacotado de outro jeito
+
+Sob MSIX o registro é **virtualizado**: uma gravação em `HKCU\...\Run` vai para um hive privado do pacote que o Windows não lê no logon. A chave é gravada, a releitura confirma, e a inicialização automática simplesmente não acontece. Nada falha, nada registra erro — o defeito aparece no dia seguinte, na máquina do usuário. Três adaptações saíram daí:
+
+| Arquivo | O que faz |
+|---|---|
+| [`src/main/packaging.ts`](src/main/packaging.ts) | `isMsixPackaged()`, via `process.windowsStore` |
+| [`src/main/index.ts`](src/main/index.ts) | não escreve o registro sob MSIX; `msix` entra no snapshot |
+| [`build/appx-extensions.xml`](build/appx-extensions.xml) | a extensão `windows.startupTask` que substitui a chave Run |
+
+E a interface acompanha: sob MSIX o switch "Iniciar com o Windows" vira uma linha informativa apontando para Configurações do Windows, e o item some do menu da bandeja. Quem controla a inicialização passa a ser o sistema — **um controle que não consegue mudar o que afirma é pior que nenhum controle**.
+
+### Duas armadilhas encontradas na prática
+
+**O `--hidden` não chega.** A `desktop:StartupTask` lança o executável sem argumentos, e não há onde declarar uma linha de comando. Na versão da Store o app abre a janela no logon em vez de subir para a bandeja. Não dá para assumir "MSIX ⇒ esconder", porque o clique no Menu Iniciar também chega sem argumentos: os dois lançamentos são indistinguíveis por `argv`. Separá-los exigiria a API de ativação do WinRT, que o Electron não expõe, ou um executável auxiliar só para a StartupTask.
+
+**O `TaskId` que o electron-builder gera é de outro produto.** Em `app-builder-lib/out/targets/AppxTarget.js` o identificador da tarefa de inicialização está fixo no código, herdado de quem escreveu o template. Por isso `addAutoLaunchExtension` fica em `false` e a extensão é declarada em `build/appx-extensions.xml`, com `TaskId` nosso.
+
+> Ao editar esse XML: ele é anexado **cru** ao `AppxManifest.xml`. Dois hifens seguidos dentro de um comentário tornam o manifesto inválido, e o `MakeAppx` responde `0x80080204` sem dizer qual linha.
+
+### O que o manifesto gerado declara
+
+Verificado extraindo o `AppxManifest.xml` do pacote, não assumido:
+
+- `<Identity Name="VPixel.Cadence" Publisher="CN=VPixel" Version="0.1.0.0" />` — **provisórios**. Os valores definitivos vêm da página de identidade do app no Partner Center e precisam bater caractere a caractere.
+- `<rescap:Capability Name="runFullTrust" />` — obrigatória para qualquer app de integridade média, e **restrita**: o Partner Center exige justificar o uso em *Opções de envio → Funcionalidades restritas*, o que acrescenta tempo à certificação.
+- Uma única extensão `windows.startupTask`, com `TaskId="CadenceStartup"`.
+- Os cinco tiles de [`build/appx/`](build/appx), gerados por `scripts/generate-appx-assets.mjs` a partir do mesmo desenho do ícone. Sem eles o electron-builder embute os logotipos de **exemplo** que acompanham a ferramenta — outra falha silenciosa.
+
+O pacote sai **não assinado** por decisão do electron-builder (`AppX is not signed — reason=Windows Store only build`): quem assina um pacote de Store é a Microsoft. Para instalar localmente seria preciso assiná-lo com um certificado cujo sujeito seja igual ao `Publisher` e confiar nesse certificado na máquina.
+
+---
+
 ## Site de distribuição
 
 `site/` é um site estático com a documentação do usuário final, a identidade visual e o botão de

@@ -1,4 +1,5 @@
 import { app, Menu, Tray, nativeImage } from 'electron'
+import type { MenuItem } from 'electron'
 import { join } from 'node:path'
 import type { Snapshot } from '@shared/contract'
 import { cyclesMenuLabel, focusLabel, startLabel, trayTooltip, waterLabel } from '@shared/format'
@@ -53,12 +54,18 @@ function buildMenu(actions: TrayActions): Menu {
     { label: 'Já bebi água', click: actions.onAcknowledgeWater },
     { type: 'separator' },
     { label: 'Configurações…', click: actions.onToggleWindow },
-    {
-      label: 'Iniciar com o Windows',
-      type: 'checkbox',
-      checked: snapshot.settings.openAtLogin,
-      click: (item) => actions.onToggleOpenAtLogin(item.checked)
-    },
+    // Sob MSIX o item sai do menu: a inicializacao e controlada em
+    // Configuracoes do Windows, e um checkbox aqui nao mudaria nada.
+    ...(snapshot.msix
+      ? []
+      : [
+          {
+            label: 'Iniciar com o Windows',
+            type: 'checkbox' as const,
+            checked: snapshot.settings.openAtLogin,
+            click: (item: MenuItem) => actions.onToggleOpenAtLogin(item.checked)
+          }
+        ]),
     { type: 'separator' },
     { label: 'Sair', click: actions.onQuit }
   ])

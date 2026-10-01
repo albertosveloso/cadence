@@ -14,6 +14,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "build": "npm run typecheck && npm run test && electron-vite build",
     "dist": "npm run build && electron-builder --win",
+    "dist:msix": "npm run build && electron-builder --win appx",
     "release": "node scripts/app-id.mjs && npm run build && electron-builder --win -c.forceCodeSigning=true",
     "test": "tsx --test src/**/*.test.ts"
   },

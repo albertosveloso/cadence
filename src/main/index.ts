@@ -35,6 +35,7 @@ import { dismissWindow, isWindowVisible, sendToWindow, showWindow, toggleWindow 
 import { registerIpc } from './ipc'
 import { configureHistory, flushHistory, getDayCount, getMonth, recordCycle } from './history'
 import { setAutostart } from './autostart'
+import { isMsixPackaged } from './packaging'
 
 const TICK_MS = 1000
 /**
@@ -43,7 +44,25 @@ const TICK_MS = 1000
  */
 const IDLE_POLL_MS = 5000
 
-/** Iniciado pelo Windows: sobe para a bandeja sem abrir janela (secao 5.4). */
+/**
+ * Iniciado pelo Windows: sobe para a bandeja sem abrir janela (secao 5.4).
+ *
+ * LIMITACAO CONHECIDA NO PACOTE MSIX
+ *
+ * A extensao windows.startupTask lanca o executavel SEM ARGUMENTOS -- o
+ * elemento desktop:StartupTask nao tem onde declarar uma linha de comando.
+ * Logo, `--hidden` nunca chega, e na versao da Store o app abre a janela no
+ * logon em vez de ir direto para a bandeja.
+ *
+ * Nao da para corrigir assumindo "MSIX => esconder": o clique no Menu Iniciar
+ * tambem chega sem argumentos, e esconder nos dois casos deixaria o usuario
+ * sem janela ao abrir o app de proposito. Os dois lancamentos sao
+ * indistinguiveis por argv; separa-los exigiria a API de ativacao do WinRT,
+ * que o Electron nao expoe, ou um executavel auxiliar so para a StartupTask.
+ *
+ * Enquanto isso, a versao NSIS mantem o comportamento do documento e a versao
+ * MSIX abre a janela no boot.
+ */
 const startsHidden = process.argv.includes('--hidden')
 
 let ticker: NodeJS.Timeout | null = null
@@ -99,7 +118,8 @@ function buildSnapshot(): Snapshot {
     cyclesToday: getDayCount(Date.now()),
     water: getWaterState(),
     settings: getSettings(),
-    darkMode: isDarkMode()
+    darkMode: isDarkMode(),
+    msix: isMsixPackaged()
   }
 }
 
@@ -133,6 +153,13 @@ function currentIdleSeconds(now: number): number {
  * como tres processos vivos, sem bandeja e sem janela.
  */
 async function applyOpenAtLogin(value: boolean): Promise<boolean> {
+  // Sob MSIX a chave Run e virtualizada: a gravacao "funciona", a releitura
+  // confirma, e o Windows nunca ve nada. Quem controla a inicializacao e a
+  // extensao windows.startupTask do manifesto, ligada e desligada pelo
+  // usuario em Configuracoes > Aplicativos > Inicializar. Escrever aqui
+  // produziria um switch que mente -- ver ./packaging.ts.
+  if (isMsixPackaged()) return false
+
   try {
     return await setAutostart(value, {
       name: __APP_ID__,
@@ -311,7 +338,7 @@ function bootstrap(): void {
   //
   // Reafirmado a cada execução porque setLoginItemSettings grava o
   // process.execPath corrente, e uma atualização troca o executável.
-  void applyOpenAtLogin(getSettings().openAtLogin)
+  if (!isMsixPackaged()) void applyOpenAtLogin(getSettings().openAtLogin)
 }
 
 app.on('before-quit', () => {

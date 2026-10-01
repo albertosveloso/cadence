@@ -15,13 +15,13 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 // Paleta espelhando os tokens de src/renderer/src/index.css
-const RED = [240, 58, 23]
-const AMBER = [245, 165, 36]
-const TRACK_ON_DARK = [84, 87, 93]
+export const RED = [240, 58, 23]
+export const AMBER = [245, 165, 36]
+export const TRACK_ON_DARK = [84, 87, 93]
 // Cinza medio: legivel tanto na barra de tarefas clara quanto na escura.
 const TRACK_NEUTRAL = [150, 144, 138]
 // #191A1C -- mesmo fundo do tema escuro do app
-const CARD = [25, 26, 28]
+export const CARD = [25, 26, 28]
 
 const SS = 4 // supersampling para antialiasing
 
@@ -33,7 +33,7 @@ const mixRgb = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2]
  * comecando no topo e girando no sentido do relogio, com o gradiente
  * vermelho -> ambar na direcao do avanco (como na referencia visual).
  */
-function drawRing({ size, sweep, track, ringWidth, radiusRatio, background, cornerRatio }) {
+export function drawRing({ size, sweep, track, ringWidth, radiusRatio, background, cornerRatio }) {
   const px = new Float64Array(size * size * 4)
 
   for (let y = 0; y < size; y++) {
@@ -122,16 +122,17 @@ function chunk(type, data) {
   return Buffer.concat([len, body, crc])
 }
 
-function encodePng(rgba, size) {
+export function encodePng(rgba, width, height = width) {
   const ihdr = Buffer.alloc(13)
-  ihdr.writeUInt32BE(size, 0)
-  ihdr.writeUInt32BE(size, 4)
+  ihdr.writeUInt32BE(width, 0)
+  ihdr.writeUInt32BE(height, 4)
   ihdr[8] = 8 // bit depth
   ihdr[9] = 6 // RGBA
-  const raw = Buffer.alloc((size * 4 + 1) * size)
-  for (let y = 0; y < size; y++) {
-    raw[y * (size * 4 + 1)] = 0 // filtro none
-    rgba.copy(raw, y * (size * 4 + 1) + 1, y * size * 4, (y + 1) * size * 4)
+  const stride = width * 4
+  const raw = Buffer.alloc((stride + 1) * height)
+  for (let y = 0; y < height; y++) {
+    raw[y * (stride + 1)] = 0 // filtro none
+    rgba.copy(raw, y * (stride + 1) + 1, y * stride, (y + 1) * stride)
   }
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
@@ -168,7 +169,14 @@ function encodeIco(pngs) {
 
 // ------------------------------------------------------------------ Saida
 
-mkdirSync(resolve(root, 'build'), { recursive: true })
+/**
+ * So grava quando executado direto (`node scripts/generate-icons.mjs`). Sem
+ * esta guarda, importar `drawRing` daqui reescreveria os icones como efeito
+ * colateral do import.
+ */
+const executadoDireto = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (executadoDireto) {
+  mkdirSync(resolve(root, 'build'), { recursive: true })
 mkdirSync(resolve(root, 'resources'), { recursive: true })
 
 // Icone do app: card escuro arredondado com o anel em ~72%
@@ -213,3 +221,4 @@ for (const [name, track] of [['tray', TRACK_NEUTRAL]]) {
 console.log('icones gerados:')
 console.log('  build/icon.ico            ' + appSizes.join(', '))
 console.log('  resources/tray.png        16, 32 (@2x)')
+}
