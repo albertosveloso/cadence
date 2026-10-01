@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cadence">
+  <!-- Mesma geometria de scripts/generate-icons.mjs: fundo #191A1C com raio de
+       canto 0.22, anel em raio 0.315 e espessura 0.075, arco de 72% a partir do
+       topo no sentido horario, com o gradiente vermelho -> ambar. -->
+  <defs>
+    <linearGradient id="cadence-arco" gradientUnits="userSpaceOnUse" x1="128" y1="47" x2="46" y2="196">
+      <stop offset="0" stop-color="#F03A17"/>
+      <stop offset="1" stop-color="#F5A524"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="14.08" y="14.08" width="227.84" height="227.84" rx="56.32" fill="#191A1C"/>
+
+  <g fill="none" stroke-width="19.2" stroke-linecap="butt">
+    <circle cx="128" cy="128" r="80.64" stroke="#54575D"/>
+    <circle cx="128" cy="128" r="80.64" stroke="url(#cadence-arco)"
+            stroke-dasharray="364.81 141.87"
+            transform="rotate(-90 128 128)"/>
+  </g>
+</svg>

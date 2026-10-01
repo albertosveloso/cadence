@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+*.log
+.DS_Store
+tsconfig.*.tsbuildinfo
+
+# Certificado de assinatura — NUNCA versionar
+build/*.pfx
+build/*.p12
+.env
+.env.local

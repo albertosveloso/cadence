@@ -1,0 +1,225 @@
+@import 'tailwindcss';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Mapeamento para utilitarios do Tailwind. `@theme inline` (e nao `@theme`)
+   e o que permite que var(--background) resolva ate a sobrescrita em .dark.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: 'Outfit Variable', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Tokens semanticos do dominio: as tres coisas que o app precisa colorir. */
+  --color-phase-focus: var(--phase-focus);
+  --color-phase-focus-tail: var(--phase-focus-tail);
+  --color-phase-break: var(--phase-break);
+  --color-phase-water: var(--phase-water);
+  --color-track: var(--track);
+  --color-app-edge: var(--app-edge);
+  --color-switch-on: var(--switch-on);
+  --color-switch-off: var(--switch-off);
+  --color-switch-thumb: var(--switch-thumb);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ---------------------------------------------------------------------------
+   Tema claro. Derivado -- a referencia visual e dark-only, este e o
+   equivalente com o mesmo acento e a mesma hierarquia de contraste.
+   --------------------------------------------------------------------------- */
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.975 0.002 60);
+  --foreground: oklch(0.18 0.004 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.004 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.004 60);
+  --primary: oklch(0.21 0.004 60);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.945 0.002 60);
+  --secondary-foreground: oklch(0.21 0.004 60);
+  --muted: oklch(0.955 0.002 60);
+  --muted-foreground: oklch(0.505 0.005 60);
+  --accent: oklch(0.945 0.002 60);
+  --accent-foreground: oklch(0.21 0.004 60);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.895 0.003 60);
+  --input: oklch(0.895 0.003 60);
+  --ring: oklch(0.58 0.015 60);
+
+  --track: oklch(0.9 0.003 60);
+  --app-edge: oklch(0.86 0.004 60);
+
+  /* O shadcn usa --primary para o switch ligado, mas aqui --primary e um
+     cinza: ligado e desligado ficavam quase identicos. O estado ligado passa
+     a usar o acento do app, e o desligado um cinza claramente mais escuro. */
+  --switch-on: var(--phase-focus);
+  --switch-off: oklch(0.82 0.004 60);
+  --switch-thumb: oklch(1 0 0);
+  --phase-focus: oklch(0.56 0.225 27);
+  --phase-focus-tail: oklch(0.72 0.165 62);
+  --phase-break: oklch(0.66 0.15 72);
+  --phase-water: oklch(0.6 0.125 225);
+}
+
+/* ---------------------------------------------------------------------------
+   Tema escuro -- este e o tema da referencia. Preto levemente quente, texto
+   em cinza-claro (nunca branco puro) e o acento ambar->vermelho no anel.
+   --------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------
+   Tema escuro.
+
+   Os tons de fundo vem de uma referencia fornecida pelo usuario, amostrada
+   pixel a pixel em vez de estimada no olho:
+
+     #191A1C  oklch(0.218 0.004 264)  fundo principal   (75% da referencia)
+     #1E1F22  oklch(0.239 0.006 265)  superficie        (22%)
+     #26282C  oklch(0.276 0.008 264)  separador         (2,6%)
+
+   Duas consequencias que importam: a familia e FRIA (matiz ~264, azul), e
+   nao quente como antes (~40-60); e o fundo e mais claro do que era
+   (0.218 contra 0.145). Por isso os textos secundarios tambem subiram -- num
+   fundo mais claro, o cinza de antes perderia contraste.
+   --------------------------------------------------------------------------- */
+.dark {
+  --background: oklch(0.218 0.004 264);
+  --foreground: oklch(0.945 0.003 264);
+  --card: oklch(0.239 0.006 265);
+  --card-foreground: oklch(0.945 0.003 264);
+  --popover: oklch(0.239 0.006 265);
+  --popover-foreground: oklch(0.945 0.003 264);
+  --primary: oklch(0.345 0.008 264);
+  --primary-foreground: oklch(0.96 0.003 264);
+  --secondary: oklch(0.276 0.008 264);
+  --secondary-foreground: oklch(0.945 0.003 264);
+  --muted: oklch(0.276 0.008 264);
+  --muted-foreground: oklch(0.665 0.008 264);
+  --accent: oklch(0.3 0.008 264);
+  --accent-foreground: oklch(0.945 0.003 264);
+  --destructive: oklch(0.65 0.21 25);
+  --destructive-foreground: oklch(0.985 0 0);
+  /* Solido, como o separador da referencia -- e nao branco translucido. */
+  --border: oklch(0.276 0.008 264);
+  --input: oklch(0.37 0.009 264);
+  --ring: oklch(0.68 0.015 264);
+
+  --track: oklch(0.32 0.008 264);
+  /* Cinza claro: no escuro o card se dissolveria no fundo da area de
+     trabalho sem uma aresta visivel. */
+  --app-edge: oklch(0.58 0.008 264);
+
+  --switch-on: var(--phase-focus);
+  --switch-off: oklch(0.355 0.008 264);
+  --switch-thumb: oklch(0.98 0.002 264);
+  --phase-focus: oklch(0.605 0.235 27);
+  --phase-focus-tail: oklch(0.8 0.16 68);
+  --phase-break: oklch(0.78 0.145 72);
+  --phase-water: oklch(0.72 0.12 222);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    /* Transparente de proposito: a janela e transparente e quem pinta o fundo
+       e o card arredondado em App.tsx. Pintar aqui devolveria os cantos retos. */
+    background: transparent;
+    @apply text-foreground font-sans antialiased;
+    /* App de bandeja: nada aqui e conteudo de documento. */
+    overflow: hidden;
+    user-select: none;
+    cursor: default;
+  }
+
+  /* O cronometro nao pode "tremular": sem largura fixa de digito, o numero
+     inteiro se desloca a cada segundo. Defeito visivel em qualquer timer. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+}
+
+@layer components {
+  /* Faixa arrastavel da janela sem moldura. */
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+
+  /* Controles dentro da faixa precisam ser clicaveis outra vez. */
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  /* Brilho suave que a referencia usa no topo do card, na cor da fase. */
+  .phase-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 80% at 50% -10%,
+      color-mix(in oklab, var(--phase-glow-color, var(--phase-focus)) 22%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 600ms ease;
+  }
+
+  .phase-glow[data-active='true']::before {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--track);
+    border-radius: 999px;
+  }
+}

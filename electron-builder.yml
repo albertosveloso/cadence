@@ -1,0 +1,84 @@
+# appId -- NAO ALTERAR depois do primeiro release publicado.
+#
+# Reverse-DNS de vpixel.com.br. Este e o unico lugar do projeto onde o appId e
+# definido: o processo principal o recebe por `define` em
+# electron.vite.config.ts, para que app.setAppUserModelId() nunca divirja daqui
+# (se divergissem, os toasts do Windows perderiam a identidade do app).
+#
+# O guid do instalador NSIS deriva deste valor e e a identidade de upgrade e
+# desinstalacao. Alterando-o depois de publicar, toda instalacao existente
+# deixa de ser atualizavel e sobra uma entrada orfa no Painel de Controle.
+#
+# `npm run release` recusa se este valor voltar a ser provisorio
+# (prefixo "pendente."), via scripts/app-id.mjs.
+appId: br.com.vpixel.cadence
+productName: Cadence
+copyright: Cadence
+
+directories:
+  buildResources: build
+  output: dist
+
+# `dependencies` do package.json esta vazio de proposito: o electron-vite
+# empacota tudo do renderer e o main nao tem dependencia externa. Por isso o
+# instalador nao carrega node_modules nenhum.
+files:
+  - out/**
+  - package.json
+
+# Icone da bandeja precisa existir em disco em tempo de execucao; o codigo o
+# resolve via process.resourcesPath quando empacotado.
+extraResources:
+  - from: resources
+    to: .
+    filter:
+      - '**/*'
+
+asar: true
+compression: maximum
+
+# Idiomas do Chromium a manter. Por padrao o Electron empacota 55 locales, que
+# somam 47 MB brutos -- 7,7 MB do instalador, medidos com LZMA. A interface do
+# Cadence e so em portugues; en-US fica como fallback do proprio Chromium.
+electronLanguages:
+  - pt-BR
+  - en-US
+
+# Remove do pacote DLLs do Chromium que o app nao usa. O arquivo explica cada
+# decisao, inclusive o que foi deixado de proposito.
+afterPack: build/after-pack.cjs
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  # O certificado NAO fica aqui. Caminho e senha vem do ambiente:
+  #   CSC_LINK           caminho para o .pfx (ou o conteudo em base64)
+  #   CSC_KEY_PASSWORD   senha do .pfx
+  # Sem essas variaveis o build sai NAO ASSINADO -- e o electron-builder so
+  # registra isso em nivel debug. Use `npm run release`, que liga
+  # forceCodeSigning e transforma o descuido em erro de build.
+  signtoolOptions:
+    signingHashAlgorithms:
+      - sha256
+    rfc3161TimeStampServer: http://timestamp.digicert.com
+
+nsis:
+  # Remove a chave de autostart na desinstalacao. Sem isso o Windows tenta
+  # lancar um executavel apagado a cada boot -- ver build/installer.nsh.
+  include: build/installer.nsh
+
+  # Todos os valores abaixo ja sao o default do electron-builder 26. Estao
+  # explicitos porque sao decisao de produto, nao acidente de default.
+  oneClick: true # duplo clique instala e abre; nenhuma pergunta
+  perMachine: false # por usuario -> RequestExecutionLevel user -> sem UAC
+  allowToChangeInstallationDirectory: false
+  runAfterFinish: true
+  createStartMenuShortcut: true
+  createDesktopShortcut: false # app de bandeja nao precisa de icone na area de trabalho
+  deleteAppDataOnUninstall: false
+  shortcutName: Cadence
+  uninstallDisplayName: Cadence
+  artifactName: ${productName}-Setup-${version}.${ext}

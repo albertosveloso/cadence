@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cadence — ritmo para o seu dia de trabalho</title>
+    <meta
+      name="description"
+      content="Um app de bandeja para Windows com dois relógios independentes: o ciclo de foco que você inicia e o lembrete de água e movimento que roda sozinho o dia inteiro."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#191A1C" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cadence — ritmo para o seu dia de trabalho" />
+    <meta
+      property="og:description"
+      content="Ciclo de foco e lembrete de movimento, na bandeja do Windows. Gratuito, sem conta e sem internet."
+    />
+    <meta property="og:image" content="img/tela-principal.png" />
+
+    <link rel="icon" href="cadence.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="cadence.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="estilo.css" />
+
+    <script>
+      // Antes do primeiro paint, para que quem prefere o escuro nunca veja o
+      // fundo claro piscar. Mesma razao do backgroundColor da janela no app.
+      ;(function () {
+        try {
+          var salvo = localStorage.getItem('cadence-tema') || 'sistema'
+          var escuro =
+            salvo === 'escuro' ||
+            (salvo === 'sistema' && matchMedia('(prefers-color-scheme: dark)').matches)
+          document.documentElement.classList.toggle('escuro', escuro)
+        } catch (e) {
+          /* modo privado sem storage: segue no claro */
+        }
+      })()
+    </script>
+  </head>
+
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="cabecalho">
+      <div class="cabecalho__interno">
+        <a class="marca" href="#topo">
+          <img src="cadence.svg" alt="" width="28" height="28" />
+          <span>Cadence</span>
+        </a>
+
+        <nav class="navegacao" aria-label="Seções">
+          <a href="#instalar">Instalar</a>
+          <a href="#foco">Usar</a>
+          <a href="#configuracoes">Configurações</a>
+          <a href="#duvidas">Dúvidas</a>
+        </nav>
+
+        <div class="tema" role="group" aria-label="Tema do site">
+          <button type="button" data-tema="claro" aria-pressed="false" aria-label="Tema claro" title="Tema claro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+          </button>
+          <button type="button" data-tema="escuro" aria-pressed="false" aria-label="Tema escuro" title="Tema escuro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+          </button>
+          <button type="button" data-tema="sistema" aria-pressed="false" aria-label="Conforme o sistema" title="Conforme o sistema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <!-- Capa ------------------------------------------------------------- -->
+      <div class="capa" id="topo">
+        <img class="capa__icone" src="cadence.svg" alt="Ícone do Cadence" width="88" height="88" />
+
+        <h1>Ritmo para o seu dia</h1>
+
+        <p>
+          O Cadence dá ritmo ao seu trabalho com <strong>dois relógios que funcionam
+          separados</strong>: um ciclo de foco que você inicia quando quer, e um lembrete de água e
+          movimento que roda sozinho o dia inteiro.
+        </p>
+
+        <div class="acoes">
+          <!-- LINK DO INSTALADOR (1 de 2) -- veja site/README.md -->
+          <a
+            class="botao botao--principal"
+            href="https://drive.usercontent.google.com/download?id=1nfWeaETa3ZKIQuvm7omKkOi_aBX3jB_o&amp;export=download&amp;confirm=t"
+            rel="noopener"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+            Baixar para Windows
+          </a>
+          <a class="botao botao--discreto" href="#instalar">Como instalar</a>
+        </div>
+
+        <p class="meta">
+          Versão 0.1.0 &middot; 91 MB &middot; Windows 10 e 11 (64 bits)<br />
+          Gratuito, sem conta e sem internet.
+        </p>
+
+        <div class="telas">
+          <figure class="tela">
+            <img
+              src="img/tela-principal.png"
+              alt="A janela do Cadence mostrando o círculo do cronômetro com o tempo restante e o botão iniciar"
+              width="380"
+              loading="lazy"
+            />
+            <figcaption>O cronômetro</figcaption>
+          </figure>
+          <figure class="tela">
+            <img
+              src="img/tela-calendario.png"
+              alt="O calendário mensal do Cadence com a quantidade de ciclos concluídos em cada dia"
+              width="380"
+              loading="lazy"
+            />
+            <figcaption>O calendário do mês</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Os dois relógios --------------------------------------------------- -->
+      <section id="dois-relogios">
+        <h2>Dois relógios, não um</h2>
+        <p class="sub">
+          O segundo não depende do primeiro. Mesmo num dia em que você não usar o cronômetro nenhuma
+          vez, o lembrete de levantar continua chegando.
+        </p>
+
+        <div class="dois">
+          <div class="cartao">
+            <h3>
+              <span class="ponto-foco">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </span>
+              Ciclo de foco
+            </h3>
+            <p>
+              25 minutos de trabalho seguidos de uma pausa. Você inicia — nenhuma fase começa
+              sozinha.
+            </p>
+          </div>
+
+          <div class="cartao">
+            <h3>
+              <span class="ponto-agua">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                </svg>
+              </span>
+              Água e movimento
+            </h3>
+            <p>
+              A cada 55 minutos, um aviso para beber água e levantar. Roda sozinho, o dia inteiro,
+              independente do foco.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Instalar ----------------------------------------------------------- -->
+      <section id="instalar">
+        <h2>Instalar</h2>
+        <p class="sub">Em cerca de 15 segundos o app instala e abre sozinho.</p>
+
+        <ol class="passos">
+          <li>
+            <p>
+              Clique em <strong>Baixar para Windows</strong> e guarde o arquivo
+              <code>Cadence-Setup-0.1.0.exe</code>.
+            </p>
+          </li>
+          <li>
+            <p>Dê <strong>dois cliques</strong> no arquivo baixado.</p>
+            <p>
+              Pronto. Não há perguntas, não há escolha de pasta, e o Windows não pede senha de
+              administrador.
+            </p>
+          </li>
+        </ol>
+
+        <div class="aviso">
+          <p>
+            <strong>Aviso do Windows na primeira vez</strong>
+            Como o instalador ainda não tem certificado de assinatura, o Windows pode mostrar uma
+            tela azul dizendo “O Windows protegeu o computador”. Clique em
+            <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>.
+            Isso não volta a acontecer.
+          </p>
+        </div>
+
+        <p>
+          Depois de instalado você encontra o Cadence no <strong>Menu Iniciar</strong>, e o ícone
+          fica na <strong>bandeja</strong>, perto do relógio do Windows.
+        </p>
+      </section>
+
+      <!-- A janela ----------------------------------------------------------- -->
+      <section id="janela">
+        <h2>A janela</h2>
+        <p class="sub">Da esquerda para a direita, de cima para baixo.</p>
+
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>O que você vê</th>
+                <th>O que é</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Água em 55 min</td>
+                <td>O segundo relógio. Clique para dizer que já bebeu e reiniciar a contagem</td>
+              </tr>
+              <tr>
+                <td class="simbolo">⚙</td>
+                <td>Configurações</td>
+              </tr>
+              <tr>
+                <td class="simbolo">✕</td>
+                <td>Esconde na bandeja. O app continua rodando</td>
+              </tr>
+              <tr>
+                <td>Círculo grande</td>
+                <td>O tempo que falta na fase atual. A borda se preenche conforme passa</td>
+              </tr>
+              <tr>
+                <td>Tracinhos</td>
+                <td>Ciclos que você já concluiu hoje</td>
+              </tr>
+              <tr>
+                <td>Palavra embaixo</td>
+                <td>
+                  Em que fase você está: <code>PRONTO</code>, <code>FOCO</code>,
+                  <code>PAUSA</code>, <code>PAUSA LONGA</code>
+                </td>
+              </tr>
+              <tr>
+                <td class="simbolo">↺</td>
+                <td>Zerar — desiste do ciclo atual. <strong>Não conta</strong></td>
+              </tr>
+              <tr>
+                <td>INICIAR</td>
+                <td>Começa a fase que está esperando</td>
+              </tr>
+              <tr>
+                <td class="simbolo">✓</td>
+                <td>Concluir agora — encerra antes do tempo. <strong>Conta</strong></td>
+              </tr>
+              <tr>
+                <td>3 ciclos hoje</td>
+                <td>Clique para abrir o calendário</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Ciclo de foco ------------------------------------------------------ -->
+      <section id="foco">
+        <h2>Usando o ciclo de foco</h2>
+
+        <h3>Começar</h3>
+        <p>
+          Clique em <strong>INICIAR FOCO</strong> (ou aperte <kbd>Espaço</kbd>). O círculo começa a
+          contar 25 minutos.
+        </p>
+
+        <h3>Enquanto trabalha</h3>
+        <ul>
+          <li>
+            <strong>PAUSAR</strong> congela o cronômetro. Pode ser o telefone, alguém chamando.
+            Retomar continua de onde parou, e <strong>o ciclo não se perde</strong>.
+          </li>
+          <li>
+            <strong>✓ Concluir agora</strong> encerra o foco antes do tempo e
+            <strong>conta como ciclo cumprido</strong>. Use quando terminou a tarefa aos 18 minutos.
+          </li>
+          <li><strong>↺ Zerar</strong> desiste. O ciclo <strong>não</strong> é contado.</li>
+        </ul>
+        <p>
+          A diferença entre os dois botões é a intenção: <strong>✓</strong> é <em>terminei
+          antes</em>, <strong>↺</strong> é <em>abandonei</em>.
+        </p>
+
+        <h3>Quando o tempo acaba</h3>
+        <p>O app avisa, toca um som, e deixa a <strong>pausa preparada</strong>.</p>
+        <p>
+          <strong>Nenhuma fase começa sozinha.</strong> A pausa fica esperando você apertar o botão,
+          e o foco seguinte também. Isso é de propósito: uma pausa que começasse sozinha enquanto
+          você ainda está escrevendo simplesmente passaria, e você teria “descansado” sem sair da
+          cadeira.
+        </p>
+
+        <h3>Pausa longa</h3>
+        <p>
+          A cada <strong>4 ciclos concluídos no dia</strong>, a pausa seguinte é de
+          <strong>15 minutos</strong> em vez de 5. O ícone muda para uma poltrona e a tela diz
+          <code>PAUSA LONGA</code>.
+        </p>
+        <p>
+          A contagem é do dia todo, não de quatro seguidos sem parar — e ela zera sozinha à
+          meia-noite.
+        </p>
+      </section>
+
+      <!-- Água --------------------------------------------------------------- -->
+      <section id="agua">
+        <h2>O lembrete de água e movimento</h2>
+        <p class="sub">A cada 55 minutos o Cadence avisa para você beber água e levantar.</p>
+
+        <ul>
+          <li>Se você ignorar, ele <strong>repete uma vez</strong> 10 minutos depois.</li>
+          <li>
+            Se ignorar de novo, ele se cala até o próximo intervalo. Ele não fica insistindo.
+          </li>
+          <li>
+            Para dizer que já cuidou disso, clique em <strong>Água em XX min</strong> no alto da
+            janela, ou clique no aviso que aparece.
+          </li>
+        </ul>
+
+        <p>
+          <strong>Ele sabe quando você não está.</strong> Se ficar 10 minutos sem mexer no mouse nem
+          no teclado, o lembrete pausa. Quando você volta, a contagem
+          <strong>recomeça do zero</strong> — porque ficar esse tempo longe já foi levantar, que era
+          o pedido dele.
+        </p>
+        <p>
+          E se o momento do aviso chegar quando você não está na frente do computador, ele espera
+          você voltar em vez de avisar para a cadeira vazia.
+        </p>
+      </section>
+
+      <!-- Calendário --------------------------------------------------------- -->
+      <section id="calendario">
+        <h2>O calendário</h2>
+        <p class="sub">Clique em “N ciclos hoje”, no rodapé da janela.</p>
+
+        <figure class="tela" style="max-width: 380px">
+          <img
+            src="img/tela-calendario.png"
+            alt="Calendário mensal com um quadradinho por dia, o número do dia em cima e a quantidade de ciclos embaixo"
+            width="380"
+            loading="lazy"
+          />
+        </figure>
+
+        <p style="margin-top: 1.5rem">
+          Cada quadradinho é um dia do mês: o número de cima é o dia, o de baixo é quantos ciclos de
+          foco você concluiu. Quanto mais vermelho, mais ciclos. O dia de hoje tem um contorno claro.
+        </p>
+        <p>Use as setas para ver outros meses. O total do mês aparece embaixo.</p>
+      </section>
+
+      <!-- Configurações ------------------------------------------------------ -->
+      <section id="configuracoes">
+        <h2>Configurações</h2>
+        <p class="sub">Clique no <strong>⚙</strong> ou aperte <kbd>Ctrl</kbd> + <kbd>,</kbd>.</p>
+
+        <p>
+          Todos os números podem ser <strong>digitados</strong> ou ajustados pelos botões
+          <strong>−</strong> e <strong>+</strong>. As mudanças salvam na hora — não existe botão
+          “Salvar”.
+        </p>
+
+        <h3>Durações</h3>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Ajuste</th>
+                <th>Padrão</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sessão de foco</td>
+                <td>25 min</td>
+              </tr>
+              <tr>
+                <td>Pausa curta</td>
+                <td>5 min</td>
+              </tr>
+              <tr>
+                <td>Pausa longa</td>
+                <td>15 min</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          A duração que você mudar vale a partir da <strong>próxima fase que iniciar</strong>. O
+          ciclo que já está correndo não muda no meio.
+        </p>
+
+        <h3>Lembretes</h3>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Ajuste</th>
+                <th>Padrão</th>
+                <th>Para que serve</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Água e movimento</td>
+                <td>55 min</td>
+                <td>De quanto em quanto tempo o lembrete chega</td>
+              </tr>
+              <tr>
+                <td>Suspender após inatividade</td>
+                <td>10 min</td>
+                <td>Quanto tempo sem mexer no computador para o app entender que você saiu</td>
+              </tr>
+              <tr>
+                <td>Som nas notificações</td>
+                <td>Ligado</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Som do aviso</td>
+                <td>Windows</td>
+                <td>
+                  <strong>Windows</strong>, <strong>Sino</strong> (o despertador de cozinha do
+                  pomodoro clássico) ou <strong>Suave</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>O som toca quando você escolhe, para poder comparar antes de decidir.</p>
+
+        <h3>Geral</h3>
+        <ul>
+          <li>
+            <strong>Tema:</strong> Claro, Escuro ou Sistema. Em “Sistema”, o app acompanha o Windows
+            automaticamente.
+          </li>
+          <li>
+            <strong>Iniciar com o Windows:</strong> ligado por padrão. O app sobe direto para a
+            bandeja quando o computador liga, sem abrir janela.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Bandeja e atalhos --------------------------------------------------- -->
+      <section id="bandeja">
+        <h2>O ícone na bandeja</h2>
+        <p class="sub">
+          O Cadence fica ao lado do relógio do Windows, mesmo com a janela fechada.
+        </p>
+
+        <ul>
+          <li><strong>Clique esquerdo:</strong> mostra ou esconde a janela.</li>
+          <li><strong>Passe o mouse:</strong> mostra a fase e o tempo que falta.</li>
+          <li>
+            <strong>Clique direito:</strong> abre o menu com tudo — iniciar, pausar, zerar, “já bebi
+            água”, configurações, iniciar com o Windows e <strong>Sair</strong>.
+          </li>
+        </ul>
+      </section>
+
+      <section id="atalhos">
+        <h2>Atalhos de teclado</h2>
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>Tecla</th>
+                <th>O que faz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><kbd>Espaço</kbd></td>
+                <td>Inicia, pausa ou retoma</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd> + <kbd>,</kbd></td>
+                <td>Abre as configurações</td>
+              </tr>
+              <tr>
+                <td><kbd>Esc</kbd></td>
+                <td>Volta para o cronômetro; no cronômetro, esconde na bandeja</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Dúvidas ------------------------------------------------------------ -->
+      <section id="duvidas">
+        <h2>Dúvidas comuns</h2>
+
+        <details>
+          <summary>Fechei a janela e o app sumiu.</summary>
+          <p>
+            Ele não sumiu — foi para a bandeja, perto do relógio do Windows. Clique no ícone para
+            trazer de volta. Fechar a janela <strong>não</strong> para o cronômetro.
+          </p>
+        </details>
+
+        <details>
+          <summary>O cronômetro para se eu fechar a janela?</summary>
+          <p>
+            Não. A contagem acontece por baixo, independente da janela estar aberta.
+          </p>
+        </details>
+
+        <details>
+          <summary>Não ouvi o som.</summary>
+          <p>
+            Confira em Configurações → Lembretes se “Som nas notificações” está ligado (o controle
+            fica <strong>vermelho</strong> quando ligado e cinza quando desligado). Confira também o
+            volume do Windows.
+          </p>
+        </details>
+
+        <details>
+          <summary>Deixei o computador ligado a noite toda. Vou acordar com uma pilha de avisos?</summary>
+          <p>
+            Não. Quando o computador dorme ou fica sem uso, os dois relógios param junto. Nada se
+            acumula.
+          </p>
+        </details>
+
+        <details>
+          <summary>Quero parar de vez.</summary>
+          <p>Clique direito no ícone da bandeja → <strong>Sair</strong>.</p>
+        </details>
+
+        <details>
+          <summary>Quero desinstalar.</summary>
+          <p>
+            Configurações do Windows → Aplicativos → Cadence → Desinstalar. Suas preferências e seu
+            histórico ficam guardados, caso você instale de novo.
+          </p>
+        </details>
+      </section>
+
+      <!-- Dados -------------------------------------------------------------- -->
+      <section id="dados">
+        <h2>Onde ficam seus dados</h2>
+        <p class="sub">
+          Tudo fica só no seu computador. O Cadence não envia nada para lugar nenhum e não precisa
+          de internet.
+        </p>
+
+        <div class="tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>O quê</th>
+                <th>Onde</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Preferências</td>
+                <td><code>%APPDATA%\cadence\settings.json</code></td>
+              </tr>
+              <tr>
+                <td>Histórico de ciclos</td>
+                <td><code>%APPDATA%\cadence\history.json</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="acoes" style="justify-content: flex-start; margin-top: 2.5rem">
+          <!-- LINK DO INSTALADOR (2 de 2) -- veja site/README.md -->
+          <a
+            class="botao botao--principal"
+            href="https://drive.usercontent.google.com/download?id=1nfWeaETa3ZKIQuvm7omKkOi_aBX3jB_o&amp;export=download&amp;confirm=t"
+            rel="noopener"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+            Baixar o Cadence
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape__interno">
+        <span><strong>Cadence</strong> 0.1.0 — por VPixel</span>
+        <span>Ritmo para o dia de trabalho.</span>
+      </div>
+    </footer>
+
+    <script>
+      // Alternador de tema. Tres estados, como no app: claro, escuro e sistema.
+      ;(function () {
+        var botoes = document.querySelectorAll('.tema button')
+        var midia = matchMedia('(prefers-color-scheme: dark)')
+
+        function ler() {
+          try {
+            return localStorage.getItem('cadence-tema') || 'sistema'
+          } catch (e) {
+            return 'sistema'
+          }
+        }
+
+        function aplicar(escolha) {
+          var escuro = escolha === 'escuro' || (escolha === 'sistema' && midia.matches)
+          var raiz = document.documentElement
+
+          raiz.classList.add('sem-transicao')
+          raiz.classList.toggle('escuro', escuro)
+          // Leitura forcada: aplica o tema novo antes de devolver as transicoes.
+          void raiz.offsetWidth
+          raiz.classList.remove('sem-transicao')
+
+          botoes.forEach(function (botao) {
+            botao.setAttribute('aria-pressed', String(botao.dataset.tema === escolha))
+          })
+        }
+
+        botoes.forEach(function (botao) {
+          botao.addEventListener('click', function () {
+            try {
+              localStorage.setItem('cadence-tema', botao.dataset.tema)
+            } catch (e) {
+              /* sem storage: vale so para esta visita */
+            }
+            aplicar(botao.dataset.tema)
+          })
+        })
+
+        // Em "sistema", acompanhar o Windows sem recarregar a pagina.
+        midia.addEventListener('change', function () {
+          if (ler() === 'sistema') aplicar('sistema')
+        })
+
+        aplicar(ler())
+      })()
+    </script>
+  </body>
+</html>

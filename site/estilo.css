@@ -1,0 +1,661 @@
+/* ---------------------------------------------------------------------------
+   Cadence -- folha de estilo do site.
+
+   Os valores de cor NAO sao escolhidos aqui: sao os mesmos tokens de
+   src/renderer/src/index.css, convertidos para hexadecimal por
+   scripts/listar-cores.mjs. Se a paleta do app mudar, rode o script de novo e
+   troque os valores destes dois blocos -- o resto da folha le so os tokens.
+   --------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --background: #f8f6f5;
+  --foreground: #131110;
+  --card: #ffffff;
+  --muted: #f1f0ef;
+  --muted-foreground: #676462;
+  --border: #dedcda;
+  --primary: #1a1816;
+  --primary-foreground: #fafafa;
+  --track: #dfdddc;
+
+  --phase-focus: #d90a1a;
+  --phase-focus-tail: #ec8904;
+  --phase-break: #c98000;
+  --phase-water: #008eb8;
+
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+  --raio: 0.75rem;
+  --coluna: 46rem;
+}
+
+/* Durante a troca de tema as transicoes sao desligadas por um frame.
+   Sem isso, medido neste site: o Chromium mantem a cor de fundo ANTIGA em
+   elementos cuja transicao cobre uma propriedade que vem de custom property --
+   o botao principal continuava com o vermelho do escuro depois de ir para o
+   claro, mesmo com var(--phase-focus) ja resolvendo para o valor certo. */
+.sem-transicao,
+.sem-transicao *,
+.sem-transicao *::before,
+.sem-transicao *::after {
+  transition: none !important;
+}
+
+/* A classe vem de um script minimo no <head>, antes do primeiro paint: o mesmo
+   motivo pelo qual o app resolve o tema no processo principal e nao no
+   renderer -- decidir depois produz um flash branco em quem escolheu escuro. */
+.escuro {
+  color-scheme: dark;
+
+  --background: #191a1c;
+  --foreground: #ecedef;
+  --card: #1e1f22;
+  --muted: #26282c;
+  --muted-foreground: #919499;
+  --border: #26282c;
+  --primary: #37393e;
+  --primary-foreground: #f1f2f4;
+  --track: #313337;
+
+  --phase-focus: #ee1d24;
+  --phase-focus-tail: #ffa733;
+  --phase-break: #f0a63c;
+  --phase-water: #33b5da;
+
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+/* --------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* O cabecalho e fixo: sem isso um link de ancora esconde o titulo atras dele. */
+  scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* O navegador aplica `margin: 1em 40px` em figure por padrao. Esses 80 px
+   invisiveis eram o que impedia as duas telas de caberem lado a lado. */
+figure {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+:focus-visible {
+  outline: 2px solid var(--phase-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Cabecalho ------------------------------------------------------------------ */
+
+.pular {
+  position: absolute;
+  left: -9999px;
+}
+
+.pular:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 60;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--raio);
+  padding: 0.6rem 1rem;
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in oklab, var(--background) 86%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.cabecalho__interno {
+  max-width: var(--coluna);
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.marca img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.navegacao {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+
+.navegacao a {
+  text-decoration: none;
+}
+
+.navegacao a:hover {
+  color: var(--foreground);
+}
+
+@media (max-width: 47rem) {
+  .navegacao {
+    display: none;
+  }
+}
+
+.tema {
+  display: flex;
+  background: var(--muted);
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.tema button {
+  all: unset;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.tema button:hover {
+  color: var(--foreground);
+}
+
+.tema button[aria-pressed='true'] {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: var(--sombra);
+}
+
+.tema svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Estrutura ------------------------------------------------------------------ */
+
+main {
+  max-width: var(--coluna);
+  margin: 0 auto;
+  padding: 0 1.25rem 5rem;
+}
+
+section {
+  padding-top: 3.5rem;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 7vw, 3.25rem);
+  margin: 0 0 0.75rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+}
+
+h3 {
+  font-size: 1.1875rem;
+  margin: 2rem 0 0.25rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+.sub {
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+}
+
+strong {
+  font-weight: 600;
+}
+
+ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+ul li::marker {
+  color: var(--muted-foreground);
+}
+
+em {
+  font-style: normal;
+  color: var(--muted-foreground);
+}
+
+/* Capa ----------------------------------------------------------------------- */
+
+.capa {
+  padding: 4.5rem 0 1rem;
+  text-align: center;
+}
+
+.capa__icone {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 1.75rem;
+  border-radius: 20px;
+  box-shadow: var(--sombra);
+}
+
+.capa p {
+  font-size: 1.1875rem;
+  color: var(--muted-foreground);
+  max-width: 34rem;
+  margin-inline: auto;
+}
+
+.capa strong {
+  color: var(--foreground);
+}
+
+/* Botoes --------------------------------------------------------------------- */
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 0.8rem 1.6rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.botao:active {
+  transform: translateY(1px);
+}
+
+/* O acento so aparece na acao principal -- o mesmo criterio do botao
+   "iniciar foco" dentro do app. */
+.botao--principal {
+  background: var(--phase-focus);
+  color: #ffffff;
+}
+
+.botao--principal:hover {
+  background: color-mix(in oklab, var(--phase-focus) 88%, black);
+}
+
+.botao--discreto {
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.botao--discreto:hover {
+  background: var(--muted);
+}
+
+.botao svg {
+  width: 18px;
+  height: 18px;
+}
+
+.meta {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 1rem;
+}
+
+/* Telas ---------------------------------------------------------------------- */
+
+.telas {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 3.5rem 0 0;
+}
+
+/* 330 px em vez dos 380 reais da janela: com o espaco de 1,5 rem entre elas,
+   e a maior largura em que as duas telas ainda cabem lado a lado dentro da
+   coluna de texto (2 x 330 + 24 = 684, contra 696 uteis). */
+.telas .tela img {
+  width: 330px;
+}
+
+.tela img {
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--sombra);
+}
+
+.tela figcaption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 0.75rem;
+}
+
+/* Cartoes -------------------------------------------------------------------- */
+
+.dois {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-top: 1.5rem;
+}
+
+.cartao {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--raio);
+  padding: 1.25rem 1.375rem;
+}
+
+.cartao h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.0625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cartao p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+
+.cartao svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ponto-foco {
+  color: var(--phase-focus);
+}
+
+.ponto-agua {
+  color: var(--phase-water);
+}
+
+/* Passos --------------------------------------------------------------------- */
+
+.passos {
+  list-style: none;
+  counter-reset: passo;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.passos li {
+  counter-increment: passo;
+  position: relative;
+  padding-left: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.passos li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 0;
+  top: -0.1rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.passos p {
+  margin: 0;
+}
+
+.passos p + p {
+  margin-top: 0.35rem;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+}
+
+/* Aviso ---------------------------------------------------------------------- */
+
+.aviso {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--phase-break);
+  border-radius: var(--raio);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.9375rem;
+}
+
+.aviso p:last-child {
+  margin-bottom: 0;
+}
+
+.aviso strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* Tabelas -------------------------------------------------------------------- */
+
+.tabela {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--raio);
+  background: var(--card);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+thead th {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+td:first-child {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.simbolo {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* Teclas --------------------------------------------------------------------- */
+
+kbd {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 0.1rem 0.45rem;
+  white-space: nowrap;
+}
+
+code {
+  font-family: 'Cascadia Code', Consolas, ui-monospace, monospace;
+  font-size: 0.875em;
+  background: var(--muted);
+  border-radius: 5px;
+  padding: 0.1rem 0.35rem;
+  word-break: break-all;
+}
+
+/* Perguntas ------------------------------------------------------------------ */
+
+details {
+  border-bottom: 1px solid var(--border);
+}
+
+details summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1rem 2rem 1rem 0;
+  font-weight: 500;
+  position: relative;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary::after {
+  content: '';
+  position: absolute;
+  right: 0.5rem;
+  top: 1.45rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--muted-foreground);
+  border-bottom: 2px solid var(--muted-foreground);
+  transform: rotate(45deg);
+  transition: transform 180ms ease;
+}
+
+details[open] summary::after {
+  transform: rotate(-135deg);
+}
+
+details p {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Rodape --------------------------------------------------------------------- */
+
+.rodape {
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+}
+
+.rodape__interno {
+  max-width: var(--coluna);
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.rodape strong {
+  color: var(--foreground);
+}
