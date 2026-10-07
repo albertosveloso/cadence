@@ -207,6 +207,21 @@ E a interface acompanha: sob MSIX o switch "Iniciar com o Windows" vira uma linh
 
 > Ao editar esse XML: ele é anexado **cru** ao `AppxManifest.xml`. Dois hifens seguidos dentro de um comentário tornam o manifesto inválido, e o `MakeAppx` responde `0x80080204` sem dizer qual linha.
 
+### Validado com o pacote instalado
+
+Não por leitura do manifesto: o pacote foi assinado com um certificado de teste, instalado de verdade e inspecionado por CDP com `Invoke-CommandInDesktopPackage`, que executa o binário **com identidade de pacote** — sem isso, `process.windowsStore` fica indefinido e o ramo MSIX nunca roda.
+
+| O que | Resultado |
+|---|---|
+| `windows.startupTask` registrada pelo Windows | `State = 2` (Enabled) |
+| `about().packaging` | `msix` |
+| Nome exibido | `Cadence Pomodoro` |
+| Switch "Iniciar com o Windows" | ausente; vira a linha informativa |
+
+**A chave da StartupTask só aparece no primeiro lançamento, não na instalação.** Imediatamente após o `Add-AppxPackage`, `HKCU\...\AppModel\SystemAppData\<PFN>\CadenceStartup` não existe. Ela é criada quando o app é ativado pela primeira vez. Quem for verificar o autostart logo depois de instalar vai concluir, errado, que a extensão não funcionou.
+
+**As duas versões não rodam ao mesmo tempo.** O bloqueio de instância única do Electron deriva do caminho de `userData`, e esse caminho é a mesma string nos dois empacotamentos. Com a versão NSIS na bandeja, o pacote MSIX inicia, registra a StartupTask e **morre em silêncio** — nenhuma janela, nenhum erro. Medido: com a NSIS parada, o MSIX sobe normalmente. Na prática atinge só quem tiver as duas instaladas, mas a falha é muda.
+
 ### O que o manifesto gerado declara
 
 Verificado extraindo o `AppxManifest.xml` do pacote, não assumido:

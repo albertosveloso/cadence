@@ -35,7 +35,7 @@ Identidade do produto, para conferência:
 | Subcategoria | *(deixe em branco)* |
 | URL da política de privacidade | *(não é obrigatória — ver observação abaixo)* |
 | Site | `https://github.com/albertosveloso/cadence` |
-| Informações de contato do suporte | *(seu e-mail de suporte)* |
+| Informações de contato do suporte | `albertosveloso@gmail.com` |
 
 > **Sobre a política de privacidade.** A documentação só a exige se o aplicativo
 > **coletar ou transmitir informações pessoais**. O Cadence não faz nem uma coisa
