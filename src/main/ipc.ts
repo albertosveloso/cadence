@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import {
   CHANNELS,
+  type AboutInfo,
   type MonthHistory,
   type NotificationSound,
   type Settings,
@@ -9,6 +10,7 @@ import {
 
 export interface IpcActions {
   getSnapshot: () => Snapshot
+  about: () => AboutInfo
   start: () => void
   pause: () => void
   resume: () => void
@@ -29,6 +31,8 @@ export interface IpcActions {
  * uma parte do estado atualizada e outra nao.
  */
 export function registerIpc(actions: IpcActions): void {
+  ipcMain.handle(CHANNELS.appAbout, () => actions.about())
+
   ipcMain.handle(CHANNELS.stateGet, () => actions.getSnapshot())
 
   ipcMain.handle(CHANNELS.focusStart, () => {

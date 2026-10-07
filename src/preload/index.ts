@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import {
   CHANNELS,
+  type AboutInfo,
   type CadenceApi,
   type NotificationSound,
   type Settings,
@@ -13,6 +14,9 @@ import {
  */
 const api: CadenceApi = {
   getSnapshot: () => ipcRenderer.invoke(CHANNELS.stateGet),
+  app: {
+    about: (): Promise<AboutInfo> => ipcRenderer.invoke(CHANNELS.appAbout)
+  },
   focus: {
     start: () => ipcRenderer.invoke(CHANNELS.focusStart),
     pause: () => ipcRenderer.invoke(CHANNELS.focusPause),

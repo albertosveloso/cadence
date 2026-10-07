@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronLeft, Minus, Plus } from 'lucide-react'
 import {
   LONG_BREAK_EVERY,
+  type AboutInfo,
   SETTINGS_RANGES,
   type NotificationSound,
   type Settings,
@@ -123,6 +124,58 @@ function StepperRow({
           <Plus />
         </Button>
       </div>
+    </div>
+  )
+}
+
+/**
+ * Identificacao do app, do desenvolvedor e do ambiente.
+ *
+ * Os dados sao buscados UMA vez: nada aqui muda durante a execucao, e por isso
+ * nao viajam no snapshot de 1 Hz junto com o cronometro.
+ *
+ * As versoes de Electron e Chromium existem para o suporte: quando alguem
+ * relata um defeito, saber o runtime exato poupa uma ida e volta.
+ */
+function Sobre() {
+  const [info, setInfo] = useState<AboutInfo | null>(null)
+
+  useEffect(() => {
+    let vivo = true
+    void window.cadence.app.about().then((dados) => {
+      if (vivo) setInfo(dados)
+    })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  // Sem placeholder: o bloco aparece quando tem o que dizer. Piscar um
+  // esqueleto por 10 ms e pior que nao mostrar nada.
+  if (!info) return null
+
+  return (
+    <div className="py-2.5">
+      <p className="text-foreground mb-2 text-[14px] leading-tight font-medium">Sobre</p>
+
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[12px]">
+        <dt className="text-muted-foreground">Aplicativo</dt>
+        <dd className="text-foreground text-right font-medium">{info.name}</dd>
+
+        <dt className="text-muted-foreground">Versão</dt>
+        <dd className="text-foreground tabular text-right font-medium">{info.version}</dd>
+
+        <dt className="text-muted-foreground">Desenvolvido por</dt>
+        <dd className="text-foreground text-right font-medium">{info.developer}</dd>
+      </dl>
+
+      <p className="text-muted-foreground mt-3 text-[10.5px] leading-relaxed">
+        {info.appId}
+        {' · '}
+        {info.packaging === 'msix' ? 'Microsoft Store' : 'Instalação local'}
+        <br />
+        Electron {info.electron} · Chromium {info.chromium} · Node {info.node}
+      </p>
     </div>
   )
 }
@@ -358,6 +411,10 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
                 onCheckedChange={(value) => void window.cadence.system.setOpenAtLogin(value)}
               />
             )}
+
+            <Separator className="my-1" />
+
+            <Sobre />
           </TabsContent>
         </div>
       </Tabs>

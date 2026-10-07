@@ -137,6 +137,7 @@ export interface Snapshot {
  * um `invoke(channel, ...args)` generico -- isso equivaleria a nao ter bridge.
  */
 export const CHANNELS = {
+  appAbout: 'app:about',
   stateGet: 'state:get',
   stateChanged: 'state:changed',
   focusStart: 'focus:start',
@@ -152,9 +153,33 @@ export const CHANNELS = {
   windowHide: 'window:hide'
 } as const
 
+/**
+ * Identificacao do app e do ambiente em que ele roda, para a tela "Sobre".
+ *
+ * Consultada uma unica vez: nada aqui muda durante a execucao, e por isso nao
+ * viaja no snapshot de 1 Hz.
+ */
+export interface AboutInfo {
+  /** Nome exibido. Difere entre NSIS e MSIX -- ver `displayName` no appx. */
+  name: string
+  version: string
+  developer: string
+  /** Reverse-DNS do pacote; util quando o usuario reporta um problema. */
+  appId: string
+  /** 'msix' na versao da Microsoft Store, 'nsis' na instalada pelo .exe. */
+  packaging: 'msix' | 'nsis'
+  electron: string
+  chromium: string
+  node: string
+}
+
 /** Superficie exposta em `window.cadence`. */
 export interface CadenceApi {
   getSnapshot(): Promise<Snapshot>
+  app: {
+    /** Dados fixos de identificacao; consultar uma vez e guardar. */
+    about(): Promise<AboutInfo>
+  }
   focus: {
     start(): Promise<Snapshot>
     pause(): Promise<Snapshot>

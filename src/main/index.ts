@@ -257,6 +257,25 @@ function bootstrap(): void {
 
   registerIpc({
     getSnapshot: buildSnapshot,
+    /**
+     * Identificacao para a tela "Sobre".
+     *
+     * O nome sai de __APP_NAMES__, nao de app.getName(): essa API devolve o
+     * campo `name` do package.json ("cadence", minusculo), e nao o nome que o
+     * usuario ve. Os dois formatos exibem nomes diferentes -- "Cadence" na
+     * instalacao por .exe e o nome reservado na Store no pacote MSIX -- entao
+     * a tela mostra o que vale para o pacote em execucao.
+     */
+    about: () => ({
+      name: isMsixPackaged() ? __APP_NAMES__.msix : __APP_NAMES__.product,
+      version: app.getVersion(),
+      developer: __APP_DEVELOPER__,
+      appId: __APP_ID__,
+      packaging: isMsixPackaged() ? 'msix' : 'nsis',
+      electron: process.versions.electron,
+      chromium: process.versions.chrome,
+      node: process.versions.node
+    }),
     start: () => {
       startPhase(Date.now())
       push()
