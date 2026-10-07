@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Composição das capturas da Store</title>
+    <!--
+      Monta uma captura da Store: a janela do app, recortada com fundo
+      transparente, sobre uma superfície neutra de 1366x768.
+
+      As três regras abaixo vêm da documentação da Microsoft e não são
+      estéticas — são critério de certificação:
+
+        - mínimo 1366x768, PNG;
+        - NÃO adicionar logotipos, ícones ou mensagens de marketing;
+        - evitar cores extremamente claras ou escuras, porque a Store pode
+          sobrepor texto no terço inferior da imagem.
+
+      Por isso o fundo é um cinza médio, e não o #191A1C do app: sobre o preto
+      do produto, uma sobreposição de texto da Store ficaria ilegível.
+    -->
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1366px;
+        height: 768px;
+        overflow: hidden;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        /* Cinza médio levemente frio, da mesma família de matiz do app —
+           claro o bastante para uma sobreposição de texto da Store no terço
+           inferior continuar legível, e escuro o bastante para a janela preta
+           do produto se destacar. */
+        background:
+          radial-gradient(120% 110% at 50% 18%, #656A73 0%, #4E525A 45%, #3E424A 100%);
+      }
+
+      img {
+        /* 700 px de altura deixa ~34 px de margem e evita o excesso de espaço
+           vazio que a documentação pede para minimizar. */
+        height: 700px;
+        width: auto;
+        display: block;
+        filter:
+          drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55))
+          drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+      }
+    </style>
+  </head>
+  <body>
+    <img id="tela" alt="" />
+    <script>
+      const nome = new URLSearchParams(location.search).get('shot')
+      const img = document.getElementById('tela')
+      img.src = `../store/raw/${nome}.png`
+      // Sinaliza ao capturador que a imagem já decodificou; capturar antes
+      // produziria um quadro com o fundo e sem a janela.
+      img.decode().then(() => { document.title = 'pronto' })
+    </script>
+  </body>
+</html>
