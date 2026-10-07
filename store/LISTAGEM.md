@@ -172,22 +172,15 @@ Até 200 caracteres cada, na ordem em que as imagens aparecem:
 ## Opções de envio — Funcionalidades restritas
 
 O Partner Center vai detectar `runFullTrust` no pacote e exigir uma
-justificativa. Texto pronto:
+justificativa. O campo aceita no máximo **500 caracteres** — o texto abaixo tem
+498:
 
 ```
-O Cadence Pomodoro é um aplicativo de desktop empacotado em MSIX que roda em nível de integridade médio. A capacidade restrita runFullTrust é obrigatória para qualquer aplicativo nessa condição, conforme a documentação de declarações de funcionalidades: um aplicativo de integridade média precisa declará-la para que o pacote possa ser instalado.
+Aplicativo de desktop Electron empacotado em MSIX, em nível de integridade médio: runFullTrust é obrigatória para qualquer aplicativo nessa condição.
 
-O aplicativo não usa a capacidade para acessar recursos privilegiados ou dados de outros aplicativos. Ele executa exclusivamente estas operações locais:
+Não é usada para acesso privilegiado. O app mantém temporizadores em memória, exibe ícone na bandeja e notificações, consulta o tempo de ociosidade do sistema, toca um áudio local e grava preferências e histórico em JSON na pasta local do pacote.
 
-- mantém dois temporizadores em memória no processo principal;
-- exibe um ícone na área de notificação e notificações do sistema;
-- consulta o tempo de ociosidade do sistema para suspender o lembrete quando o usuário se ausenta do computador;
-- reproduz um arquivo de áudio local ao final de cada ciclo;
-- grava duas preferências e o histórico de ciclos em arquivos JSON na pasta local do próprio aplicativo.
-
-O aplicativo não acessa a rede, não coleta nem transmite dados pessoais, não requer elevação de privilégios, não instala drivers nem serviços, e não interage com outros aplicativos.
-
-A capacidade é declarada apenas porque o modelo de empacotamento a exige para aplicativos de desktop de confiança total, e não para ampliar o acesso do aplicativo.
+Não acessa a rede, não coleta dados pessoais, não exige elevação, não instala drivers nem serviços.
 ```
 
 ---
