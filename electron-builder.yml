@@ -73,15 +73,22 @@ win:
 # publicado na release do GitHub, com hash conhecido. O MSIX sai por
 # `npm run dist:msix`, que passa o alvo pela linha de comando.
 #
-# identityName e publisher sao PROVISORIOS. Os valores definitivos sao
-# atribuidos pelo Partner Center na pagina de identidade do app e precisam
-# bater caractere a caractere, senao a submissao e recusada.
+# A identidade abaixo e a DEFINITIVA, atribuida pelo Partner Center.
+# Store ID do produto: 9NPNDW5DLSBC.
 appx:
-  identityName: VPixel.Cadence
-  publisher: CN=VPixel
-  publisherDisplayName: VPixel
+  # Os tres valores abaixo vem da pagina Gerenciamento de produtos > Identidade
+  # do produto, no Partner Center, e NAO podem ser inventados: o upload compara
+  # caractere a caractere.
+  identityName: VPixelSolues.CadencePomodoro
+  publisher: CN=6932F60F-53DD-4186-89B9-DF420162297B
+  publisherDisplayName: 'VPixel Soluções'
+
+  # O nome reservado na Store e "Cadence Pomodoro", e o DisplayName do pacote
+  # TEM de ser um nome reservado: divergindo, a submissao e recusada com
+  # "uses a display name that you have not reserved". Por isso este campo nao
+  # acompanha o productName, que segue "Cadence" e define Cadence.exe.
+  displayName: Cadence Pomodoro
   applicationId: Cadence
-  displayName: Cadence
   backgroundColor: '#191A1C'
   languages:
     - pt-BR

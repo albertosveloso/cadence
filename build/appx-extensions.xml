@@ -16,5 +16,5 @@
   MakeAppx (0x80080204) nao diz qual linha causou.
 -->
 <desktop:Extension Category="windows.startupTask" Executable="app\Cadence.exe" EntryPoint="Windows.FullTrustApplication">
-  <desktop:StartupTask TaskId="CadenceStartup" Enabled="true" DisplayName="Cadence" />
+  <desktop:StartupTask TaskId="CadenceStartup" Enabled="true" DisplayName="Cadence Pomodoro" />
 </desktop:Extension>
