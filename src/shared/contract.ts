@@ -36,6 +36,17 @@ export interface Settings {
   theme: ThemePreference
   /** Iniciar com o Windows. */
   openAtLogin: boolean
+  /**
+   * Subir direto para a bandeja, sem abrir a janela.
+   *
+   * Existe como PREFERENCIA, e nao como argumento de linha de comando, porque
+   * no pacote MSIX o argumento nunca chega: a extensao windows.startupTask
+   * lanca o executavel sem argumentos, e `desktop:StartupTask` nao tem onde
+   * declarar uma linha de comando -- so TaskId, Enabled e DisplayName.
+   *
+   * Uma preferencia armazenada e a unica coisa que sobrevive a esse lancamento.
+   */
+  startMinimized: boolean
   /** Som na troca de fase e no lembrete. */
   soundEnabled: boolean
   /** Qual som tocar quando soundEnabled estiver ligado. */
@@ -50,6 +61,9 @@ export const DEFAULT_SETTINGS: Settings = {
   idleThresholdMinutes: 10,
   theme: 'system',
   openAtLogin: true,
+  // Falso por padrao: na instalacao por .exe quem esconde e o `--hidden` da
+  // chave Run, entao ligar isto faria o app sumir tambem no clique do atalho.
+  startMinimized: false,
   soundEnabled: true,
   notificationSound: 'windows'
 }

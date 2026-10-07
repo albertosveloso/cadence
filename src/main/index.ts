@@ -45,25 +45,36 @@ const TICK_MS = 1000
 const IDLE_POLL_MS = 5000
 
 /**
- * Iniciado pelo Windows: sobe para a bandeja sem abrir janela (secao 5.4).
+ * Subir para a bandeja sem abrir a janela (secao 5.4).
  *
- * LIMITACAO CONHECIDA NO PACOTE MSIX
+ * POR QUE NAO BASTA O ARGUMENTO
  *
- * A extensao windows.startupTask lanca o executavel SEM ARGUMENTOS -- o
- * elemento desktop:StartupTask nao tem onde declarar uma linha de comando.
- * Logo, `--hidden` nunca chega, e na versao da Store o app abre a janela no
- * logon em vez de ir direto para a bandeja.
+ * No pacote MSIX a extensao windows.startupTask lanca o executavel SEM
+ * ARGUMENTOS, e `desktop:StartupTask` nao tem onde declarar uma linha de
+ * comando: o esquema so aceita TaskId, Enabled, DisplayName e
+ * rescap5:ImmediateRegistration. Logo `--hidden` nunca chega.
  *
- * Nao da para corrigir assumindo "MSIX => esconder": o clique no Menu Iniciar
- * tambem chega sem argumentos, e esconder nos dois casos deixaria o usuario
- * sem janela ao abrir o app de proposito. Os dois lancamentos sao
- * indistinguiveis por argv; separa-los exigiria a API de ativacao do WinRT,
- * que o Electron nao expoe, ou um executavel auxiliar so para a StartupTask.
+ * E nao da para deduzir pelo ambiente: o clique no bloco do Menu Iniciar
+ * tambem chega sem argumentos, entao os dois lancamentos sao indistinguiveis
+ * por argv. A API de ativacao do WinRT separaria os dois, mas o Electron nao
+ * a expoe; `wasOpenedAtLogin` existe apenas no macOS e `openAsHidden` foi
+ * removido.
  *
- * Enquanto isso, a versao NSIS mantem o comportamento do documento e a versao
- * MSIX abre a janela no boot.
+ * Sobra a preferencia armazenada, que e o que sobrevive a um lancamento sem
+ * argumentos. O argumento continua valendo como sobreposicao explicita: e ele
+ * que a chave Run grava na instalacao por .exe.
+ *
+ * Consequencia assumida: com a preferencia ligada, abrir o app pelo atalho
+ * tambem sobe so a bandeja. Isso deixa de ser surpresa porque foi o usuario
+ * que pediu. E no caso comum nem aparece: depois do logon o app ja esta vivo,
+ * e o atalho cai no handler de segunda instancia, que mostra a janela.
  */
-const startsHidden = process.argv.includes('--hidden')
+const hiddenPorArgumento = process.argv.includes('--hidden')
+
+/** Lido no bootstrap, DEPOIS do store: a preferencia ainda nao existe no topo. */
+function devemComecarEscondido(): boolean {
+  return hiddenPorArgumento || getSettings().startMinimized
+}
 
 let ticker: NodeJS.Timeout | null = null
 let idleSeconds = 0
@@ -349,7 +360,7 @@ function bootstrap(): void {
     push()
   }, TICK_MS)
 
-  if (!startsHidden) showWindow()
+  if (!devemComecarEscondido()) showWindow()
 
   // DEPOIS da bandeja e da janela, de propósito. O app tem de estar visível e
   // operável antes de tocar em integração com o sistema operacional, para que

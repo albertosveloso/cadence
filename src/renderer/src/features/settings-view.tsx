@@ -398,8 +398,8 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
                     Iniciar com o Windows
                   </p>
                   <p className="text-muted-foreground mt-0.5 text-[11px] leading-snug">
-                    Nesta versão quem controla é o Windows: Configurações &rsaquo; Aplicativos
-                    &rsaquo; Inicializar.
+                    Nesta versão quem liga e desliga é o Windows: Configurações &rsaquo;
+                    Aplicativos &rsaquo; Inicializar. Para subir sem janela, use a opção abaixo.
                   </p>
                 </div>
               </div>
@@ -411,6 +411,15 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
                 onCheckedChange={(value) => void window.cadence.system.setOpenAtLogin(value)}
               />
             )}
+
+            <Separator className="my-1" />
+
+            <ToggleRow
+              label="Iniciar minimizado na bandeja"
+              hint="O app sobe sem abrir a janela. Clique no ícone da bandeja para mostrá-la."
+              checked={settings.startMinimized}
+              onCheckedChange={(startMinimized) => update({ startMinimized })}
+            />
 
             <Separator className="my-1" />
 

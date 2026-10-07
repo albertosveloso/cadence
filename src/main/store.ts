@@ -93,6 +93,7 @@ function sanitize(raw: unknown): Settings {
     ),
     theme: asTheme(input.theme),
     openAtLogin: asBoolean(input.openAtLogin, DEFAULT_SETTINGS.openAtLogin),
+    startMinimized: asBoolean(input.startMinimized, DEFAULT_SETTINGS.startMinimized),
     soundEnabled: asBoolean(input.soundEnabled, DEFAULT_SETTINGS.soundEnabled),
     notificationSound: asSound(input.notificationSound)
   }

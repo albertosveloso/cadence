@@ -201,7 +201,15 @@ E a interface acompanha: sob MSIX o switch "Iniciar com o Windows" vira uma linh
 
 ### Duas armadilhas encontradas na prática
 
-**O `--hidden` não chega.** A `desktop:StartupTask` lança o executável sem argumentos, e não há onde declarar uma linha de comando. Na versão da Store o app abre a janela no logon em vez de subir para a bandeja. Não dá para assumir "MSIX ⇒ esconder", porque o clique no Menu Iniciar também chega sem argumentos: os dois lançamentos são indistinguíveis por `argv`. Separá-los exigiria a API de ativação do WinRT, que o Electron não expõe, ou um executável auxiliar só para a StartupTask.
+**O `--hidden` não chega, e a saída não é um argumento.** A `desktop:StartupTask` lança o executável sem argumentos, e o esquema do elemento não tem onde declarar uma linha de comando — só `TaskId`, `Enabled`, `DisplayName` e `rescap5:ImmediateRegistration`. Deduzir pelo ambiente também não serve: o clique no bloco do Menu Iniciar chega igualmente sem argumentos, então os dois lançamentos são indistinguíveis por `argv`.
+
+As saídas do Electron não existem: `wasOpenedAtLogin` é **macOS apenas** e `openAsHidden` foi removido. A API de ativação do WinRT separaria os dois, mas o Electron não a expõe.
+
+Sobra o que sobrevive a um lançamento sem argumentos: **uma preferência armazenada**. Daí a opção `startMinimized`, exposta como "Iniciar minimizado na bandeja" em Configurações › Geral. O argumento continua valendo como sobreposição explícita, e é ele que a chave Run grava na instalação por `.exe`, então o comportamento do NSIS não muda.
+
+Consequência assumida: com a preferência ligada, abrir o app pelo atalho também sobe só a bandeja. Deixa de ser surpresa porque foi o usuário que pediu — e no caso comum nem aparece, porque depois do logon o app já está vivo e o atalho cai no handler de segunda instância, que mostra a janela.
+
+Verificado com o app empacotado, três cenários: sem argumento e preferência desligada cria janela; sem argumento e preferência ligada não cria; `--hidden` com preferência desligada não cria.
 
 **O `TaskId` que o electron-builder gera é de outro produto.** Em `app-builder-lib/out/targets/AppxTarget.js` o identificador da tarefa de inicialização está fixo no código, herdado de quem escreveu o template. Por isso `addAutoLaunchExtension` fica em `false` e a extensão é declarada em `build/appx-extensions.xml`, com `TaskId` nosso.
 

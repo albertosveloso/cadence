@@ -128,6 +128,7 @@ O som toca quando você escolhe, para poder comparar antes de decidir.
 
 - **Tema:** Claro, Escuro ou Sistema. Em "Sistema", o app acompanha o Windows automaticamente.
 - **Iniciar com o Windows:** ligado por padrão. O app sobe direto para a bandeja quando o computador liga, sem abrir janela.
+- **Iniciar minimizado na bandeja:** desligado por padrão. Ligado, o app sobe sem abrir a janela — clique no ícone da bandeja para mostrá-la.
 - **Sobre:** no fim da aba, mostra a versão instalada e quem desenvolveu. Se precisar relatar um problema, é de lá que saem os dados úteis.
 
 ---
