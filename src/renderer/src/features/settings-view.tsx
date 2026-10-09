@@ -129,13 +129,15 @@ function StepperRow({
 }
 
 /**
- * Identificacao do app, do desenvolvedor e do ambiente.
+ * Versao e autoria, e nada mais.
  *
  * Os dados sao buscados UMA vez: nada aqui muda durante a execucao, e por isso
  * nao viajam no snapshot de 1 Hz junto com o cronometro.
  *
- * As versoes de Electron e Chromium existem para o suporte: quando alguem
- * relata um defeito, saber o runtime exato poupa uma ida e volta.
+ * O identificador do pacote e as versoes de Electron, Chromium e Node ja
+ * estiveram aqui, como atalho para o suporte. Sairam: sao ruido para quem usa
+ * o app, e num painel de 400 px de largura cada linha a mais e uma linha que
+ * empurra o resto para fora da tela.
  */
 function Sobre() {
   const [info, setInfo] = useState<AboutInfo | null>(null)
@@ -159,23 +161,12 @@ function Sobre() {
       <p className="text-foreground mb-2 text-[14px] leading-tight font-medium">Sobre</p>
 
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[12px]">
-        <dt className="text-muted-foreground">Aplicativo</dt>
-        <dd className="text-foreground text-right font-medium">{info.name}</dd>
-
         <dt className="text-muted-foreground">Versão</dt>
         <dd className="text-foreground tabular text-right font-medium">{info.version}</dd>
 
         <dt className="text-muted-foreground">Desenvolvido por</dt>
         <dd className="text-foreground text-right font-medium">{info.developer}</dd>
       </dl>
-
-      <p className="text-muted-foreground mt-3 text-[10.5px] leading-relaxed">
-        {info.appId}
-        {' · '}
-        {info.packaging === 'msix' ? 'Microsoft Store' : 'Instalação local'}
-        <br />
-        Electron {info.electron} · Chromium {info.chromium} · Node {info.node}
-      </p>
     </div>
   )
 }
@@ -330,9 +321,17 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
           </TabsContent>
 
           <TabsContent value="lembretes" className="divide-border/60 divide-y">
-            <StepperRow
-              label="Água e movimento"
+            <ToggleRow
+              label="Lembrete de água e movimento"
               hint="Roda sozinho, sem depender do ciclo de foco."
+              checked={settings.waterEnabled}
+              onCheckedChange={(waterEnabled) => update({ waterEnabled })}
+            />
+            {/* O intervalo continua editável com o lembrete desligado: o
+                valor é a preferência da pessoa, e desligar por uma tarde não
+                é motivo para perdê-lo. */}
+            <StepperRow
+              label="Intervalo"
               field="waterIntervalMinutes"
               value={settings.waterIntervalMinutes}
               unit="min"
@@ -355,7 +354,7 @@ export function SettingsView({ snapshot, onBack }: SettingsViewProps) {
                 Som do aviso
               </p>
               <p className="text-muted-foreground mb-2 text-[11px] leading-snug">
-                Toca ao escolher. &quot;Sino&quot; é o despertador de cozinha do pomodoro clássico.
+                Toca ao escolher. &quot;Sino&quot; é o pomodoro clássico.
               </p>
               <Segmented
                 options={SOUNDS}

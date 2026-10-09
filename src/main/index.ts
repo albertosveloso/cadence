@@ -21,8 +21,8 @@ import {
   getWaterState,
   onWaterEvent,
   resumeWaterFromSleep,
+  setWaterEnabled,
   setWaterSettingsProvider,
-  startWaterTimer,
   suspendWater,
   syncWaterSettings,
   tickWater
@@ -189,11 +189,18 @@ function applySettings(patch: Partial<Settings>): void {
   const previousWaterIntervalMs = previous.waterIntervalMinutes * 60_000
   const previousTheme = previous.theme
   const previousOpenAtLogin = previous.openAtLogin
+  const previousWaterEnabled = previous.waterEnabled
 
   const next = updateSettings(patch)
 
   syncFocusSettings()
-  syncWaterSettings(previousWaterIntervalMs, Date.now())
+  // Ligar ou desligar o lembrete reinicia o relogio; so ajustar o intervalo
+  // preserva o tempo ja decorrido. Sao efeitos diferentes e exclusivos.
+  if (next.waterEnabled !== previousWaterEnabled) {
+    setWaterEnabled(next.waterEnabled, Date.now())
+  } else {
+    syncWaterSettings(previousWaterIntervalMs, Date.now())
+  }
   if (next.theme !== previousTheme) applyThemePreference()
 
   if (next.openAtLogin !== previousOpenAtLogin) {
@@ -269,23 +276,15 @@ function bootstrap(): void {
   registerIpc({
     getSnapshot: buildSnapshot,
     /**
-     * Identificacao para a tela "Sobre".
+     * Versao e autoria para a tela "Sobre".
      *
-     * O nome sai de __APP_NAMES__, nao de app.getName(): essa API devolve o
-     * campo `name` do package.json ("cadence", minusculo), e nao o nome que o
-     * usuario ve. Os dois formatos exibem nomes diferentes -- "Cadence" na
-     * instalacao por .exe e o nome reservado na Store no pacote MSIX -- entao
-     * a tela mostra o que vale para o pacote em execucao.
+     * __APP_DEVELOPER__ e injetado em tempo de build a partir do
+     * publisherDisplayName de electron-builder.yml, que a Microsoft Store
+     * compara caractere a caractere -- inclusive os acentos.
      */
     about: () => ({
-      name: isMsixPackaged() ? __APP_NAMES__.msix : __APP_NAMES__.product,
       version: app.getVersion(),
-      developer: __APP_DEVELOPER__,
-      appId: __APP_ID__,
-      packaging: isMsixPackaged() ? 'msix' : 'nsis',
-      electron: process.versions.electron,
-      chromium: process.versions.chrome,
-      node: process.versions.node
+      developer: __APP_DEVELOPER__
     }),
     start: () => {
       startPhase(Date.now())
@@ -313,8 +312,17 @@ function bootstrap(): void {
       push()
     },
     previewSound: playNotificationSound,
-    updateSettings: applySettings,
-    setOpenAtLogin: (value) => applySettings({ openAtLogin: value }),
+    // O push imediato NAO e redundante com o tick de 1 Hz: sem ele, um
+    // interruptor clicado fica ate um segundo na posicao antiga, porque a
+    // interface so redesenha quando o proximo snapshot chega.
+    updateSettings: (patch) => {
+      applySettings(patch)
+      push()
+    },
+    setOpenAtLogin: (value) => {
+      applySettings({ openAtLogin: value })
+      push()
+    },
     hideWindow: dismissWindow
   })
 
@@ -348,9 +356,9 @@ function bootstrap(): void {
     getSnapshot: buildSnapshot
   })
 
-  // Automatico, desde que o app esteja em execucao, sem depender do ciclo de
-  // foco (secao 5.2).
-  startWaterTimer(Date.now())
+  // Automatico, desde que o app esteja em execucao e o lembrete esteja
+  // ligado, sem depender do ciclo de foco (secao 5.2).
+  setWaterEnabled(getSettings().waterEnabled, Date.now())
 
   // Um unico intervalo para os dois relogios, o tooltip e o push.
   ticker = setInterval(() => {

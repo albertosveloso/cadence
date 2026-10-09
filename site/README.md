@@ -24,23 +24,33 @@ GitHub. Por isso o site inteiro tem cerca de 116 KB e sobe em qualquer host est�
 Já está aplicado nos dois botões do `index.html`:
 
 ```
-https://github.com/albertosveloso/cadence/releases/download/0.1.0/Cadence-Setup-0.1.0.exe
+https://github.com/albertosveloso/cadence/releases/download/0.2.0/Cadence-Setup-0.2.0.exe
 ```
 
-O instalador é um **asset da release `0.1.0`** do próprio repositório. Verificado anonimamente,
-sem sessão do GitHub e com user-agent de navegador: `302` para o CDN e depois `206` com
+> **O link só responde depois que a release `0.2.0` existir.** Os dois botões já apontam para
+> ela; enquanto a tag não for criada e o `Cadence-Setup-0.2.0.exe` não for anexado, o GitHub
+> devolve 404. Crie a release antes de publicar o site, ou publique os dois juntos.
+
+A release `0.1.0` continua válida no seu endereço antigo — a URL carrega a tag, então nada do
+que já foi baixado deixa de funcionar. Ela foi verificada anonimamente, sem sessão do GitHub e
+com user-agent de navegador: `302` para o CDN e depois `206` com
 `Content-Type: application/octet-stream`,
 `Content-Disposition: attachment; filename=Cadence-Setup-0.1.0.exe`,
-`Content-Range: .../95741868` e os bytes iniciais `MZ` de executável. O SHA-256 do arquivo é
-`d81b388bffcbc9bbe7951c050dcae03f73a0bbb896e2ff210b5720c96f312900`.
+`Content-Range: .../95741868` e os bytes iniciais `MZ` de executável. O SHA-256 daquele arquivo
+é `d81b388bffcbc9bbe7951c050dcae03f73a0bbb896e2ff210b5720c96f312900`.
+
+O `dist/Cadence-Setup-0.2.0.exe` gerado nesta máquina tem 95.742.519 bytes e SHA-256
+`75ba370c94696c29eb323a02da8fc597fc660952723ed1ada344c6d1a2eda6ed`. Depois de anexá-lo à
+release, baixe pelo link público e confira que o hash bate — é a única forma de saber que o
+botão entrega o binário que você construiu.
 
 Três condições sustentam esse link, e vale conhecê-las antes de mexer:
 
 - **O repositório precisa continuar público.** Assets de release em repositório privado exigem
   autenticação, e o botão passaria a devolver uma página de login.
-- **A URL é imutável por versão.** O caminho carrega a tag (`0.1.0`) e o nome do arquivo, então
+- **A URL é imutável por versão.** O caminho carrega a tag (`0.2.0`) e o nome do arquivo, então
   ele nunca aponta para outro binário — o que é exatamente o que se quer num link de download.
-- **A tag não pode ser reaproveitada.** Apagar e recriar a release `0.1.0` com outro arquivo
+- **A tag não pode ser reaproveitada.** Apagar e recriar a release `0.2.0` com outro arquivo
   tornaria o link mentiroso para quem já o tem.
 
 > A release está marcada como **pré-lançamento**. O download funciona normalmente, mas ela não
@@ -49,7 +59,7 @@ Três condições sustentam esse link, e vale conhecê-las antes de mexer:
 
 ### Ao publicar uma versão nova
 
-1. Crie a release com a tag da versão (ex.: `0.2.0`) e anexe o `dist/Cadence-Setup-0.2.0.exe`.
+1. Crie a release com a tag da versão (ex.: `0.3.0`) e anexe o `dist/Cadence-Setup-0.3.0.exe`.
 2. Troque as **duas** URLs no `index.html` — a tag e o nome do arquivo mudam.
 
 ---
@@ -85,8 +95,10 @@ Cloudflare Pages — ou por FTP, copiando `site/` para a pasta pública do servi
 1. Crie a release no GitHub com a tag da versão e anexe o instalador — ver a seção 1.
 2. Troque as **duas** URLs de download no `index.html`.
 3. Atualize o nome do arquivo no passo 1 de **Instalar**:
-   `<code>Cadence-Setup-0.1.0.exe</code>`.
-4. Atualize `Versão 0.1.0 · 91 MB` abaixo dos botões da capa, e o `0.1.0` do rodapé.
+   `<code>Cadence-Setup-0.2.0.exe</code>`.
+4. Atualize `Versão 0.2.0 · 91 MB` abaixo dos botões da capa, o `0.2.0` da tabela em **Sobre o
+   Cadence** e o `0.2.0` do rodapé.
+5. Refaça as imagens de `site/img/` se a interface mudou — elas são capturas da janela em 1x.
 
 ---
 

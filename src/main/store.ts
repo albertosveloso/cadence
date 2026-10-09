@@ -81,6 +81,7 @@ function sanitize(raw: unknown): Settings {
       SETTINGS_RANGES.longBreakMinutes,
       DEFAULT_SETTINGS.longBreakMinutes
     ),
+    waterEnabled: asBoolean(input.waterEnabled, DEFAULT_SETTINGS.waterEnabled),
     waterIntervalMinutes: clampInt(
       input.waterIntervalMinutes,
       SETTINGS_RANGES.waterIntervalMinutes,

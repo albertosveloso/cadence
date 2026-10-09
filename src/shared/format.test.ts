@@ -105,7 +105,7 @@ describe('etiquetas da bandeja (criterio 3)', () => {
     assert.equal(focusLabel(state), 'Pausa 05:00')
   })
 
-  it('descreve os quatro estados do lembrete', () => {
+  it('descreve os cinco estados do lembrete', () => {
     assert.equal(waterLabel(snapshot()), 'Água em 55 min')
     assert.equal(
       waterLabel(snapshot({ water: { status: 'fired', remainingMs: 10 * MINUTE } })),
@@ -118,6 +118,12 @@ describe('etiquetas da bandeja (criterio 3)', () => {
     assert.equal(
       waterLabel(snapshot({ water: { status: 'suspended', remainingMs: 30 * MINUTE } })),
       'Água: em espera por inatividade'
+    )
+    // Desligado e distinto de "em espera": um a pessoa escolheu, o outro o
+    // app deduziu da ausencia dela.
+    assert.equal(
+      waterLabel(snapshot({ water: { status: 'off', remainingMs: 0 } })),
+      'Água: lembrete desligado'
     )
   })
 

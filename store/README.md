@@ -14,7 +14,7 @@ store/
   raw/                           as capturas da janela, 3x, com fundo transparente
 ```
 
-O pacote a enviar é `dist/Cadence-0.1.0.appx`, que não é versionado — gere com
+O pacote a enviar é `dist/Cadence-0.2.0.appx`, que não é versionado — gere com
 `npm run dist:msix`.
 
 ---
@@ -24,7 +24,7 @@ O pacote a enviar é `dist/Cadence-0.1.0.appx`, que não é versionado — gere 
 Três regras moldaram a composição das capturas. Não são preferência estética:
 
 - **Mínimo 1366 × 768**, PNG, até 10 imagens para a família Desktop. A janela do
-  Cadence tem 400 × 452 — uma captura crua seria recusada por tamanho.
+  Cadence tem 400 × 500 — uma captura crua seria recusada por tamanho.
 - **Não adicionar logotipos, ícones ou mensagens de marketing.** Por isso as
   imagens mostram só a janela do app sobre uma superfície neutra, sem chamadas.
 - **Evitar cores extremamente claras ou escuras**, e manter o essencial nos dois
@@ -59,7 +59,8 @@ sair vazio e o contador não mostrar zero.
 2. Crie um perfil com histórico. O arquivo é um JSON de `"AAAA-MM-DD": ciclos`:
 
    ```bash
-   mkdir -p /tmp/demo && echo '{"2026-10-06":5,"2026-10-07":5}' > /tmp/demo/history.json
+   mkdir -p /tmp/demo
+   echo '{"2026-10-08":4,"2026-10-09":5}' > /tmp/demo/history.json
    ```
 
 3. Suba o app apontando para esse perfil, com depuração remota:
@@ -93,7 +94,7 @@ sair vazio e o contador não mostrar zero.
 2. Refaça as capturas se a interface mudou.
 3. Atualize **Novidades nesta versão** em `LISTAGEM.md`.
 4. A versão do pacote precisa ser maior que a publicada. O quarto número fica
-   em zero: `0.2.0.0`.
+   em zero — `0.2.0.0` para a 0.2.0.
 
 A justificativa de `runFullTrust` normalmente **não** precisa ser repetida nas
 atualizações, a menos que o pacote passe a declarar outras funcionalidades.

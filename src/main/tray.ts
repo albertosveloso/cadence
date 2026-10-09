@@ -51,7 +51,11 @@ function buildMenu(actions: TrayActions): Menu {
     { label: 'Zerar', enabled: status !== 'idle', click: actions.onReset },
     { type: 'separator' },
     { label: waterLabel(snapshot), enabled: false },
-    { label: 'Já bebi água', click: actions.onAcknowledgeWater },
+    // Com o lembrete desligado nao ha contagem para reiniciar: o comando sai
+    // do menu em vez de ficar ali sem efeito.
+    ...(snapshot.water.status === 'off'
+      ? []
+      : [{ label: 'Já bebi água', click: actions.onAcknowledgeWater }]),
     { type: 'separator' },
     { label: 'Configurações…', click: actions.onToggleWindow },
     // Sob MSIX o item sai do menu: a inicializacao e controlada em

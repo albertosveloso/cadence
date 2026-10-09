@@ -104,8 +104,9 @@ Sobre a ausência de notificação: o app só avisa o que acontece **sem** o usu
 | Regra | Definição |
 |---|---|
 | Intervalo padrão | 50 a 60 minutos |
-| Configurabilidade | Intervalo editável pelo usuário |
-| Acionamento | Automático, desde que o app esteja em execução |
+| Configurabilidade | Intervalo editável pelo usuário; lembrete ligável e desligável |
+| Padrão na instalação | **Ligado** |
+| Acionamento | Automático, desde que o app esteja em execução e o lembrete esteja ligado |
 | Dependência do Pomodoro | Nenhuma |
 
 **Comportamento em caso de lembrete ignorado:**
@@ -113,6 +114,14 @@ Sobre a ausência de notificação: o app só avisa o que acontece **sem** o usu
 - Se ignorado novamente, silencia até o próximo intervalo regular.
 
 Justificativa: insistência excessiva leva o usuário a desativar o app inteiro. Uma repetição cobre o caso de distração momentânea sem virar incômodo.
+
+**Desligamento pontual.** O mesmo raciocínio sustenta o interruptor: num dia tomado por reuniões, a alternativa a desligar o lembrete é desligar o app, e desligar o app leva junto o ciclo de foco e o registro do dia. Um controle pontual é o que impede a desinstalação.
+
+Regras do desligamento:
+- Desligado, o relógio **para** — não congela. Nada fica pendente e nada se acumula.
+- O intervalo em minutos permanece armazenado: desligar por uma tarde não é motivo para perder a preferência.
+- Religar inicia um **intervalo cheio**, nunca o restante de antes. Cobrar o tempo que faltava transformaria o religamento em punição.
+- O ciclo de foco não é afetado. A independência da §4 vale nos dois sentidos.
 
 ### 5.3 Janela de atividade
 

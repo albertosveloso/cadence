@@ -93,7 +93,7 @@ appx:
   languages:
     - pt-BR
     - en-US
-  # Nome do artefato sem espacos: o padrao sairia "Cadence 0.1.0.appx", que
+  # Nome do artefato sem espacos: o padrao sairia "Cadence 0.2.0.appx", que
   # complica upload, URL e linha de comando sem nenhum ganho.
   artifactName: ${productName}-${version}.${ext}
 

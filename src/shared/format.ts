@@ -67,6 +67,8 @@ export function startLabel(snapshot: Snapshot): string {
 /** Estado do lembrete independente, para o menu da bandeja. */
 export function waterLabel(snapshot: Snapshot): string {
   switch (snapshot.water.status) {
+    case 'off':
+      return 'Água: lembrete desligado'
     case 'suspended':
       return 'Água: em espera por inatividade'
     case 'fired':

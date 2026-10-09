@@ -10,7 +10,7 @@ Identidade do produto, para conferência:
 | Nome reservado | **Cadence Pomodoro** |
 | Store ID | `9NPNDW5DLSBC` |
 | Identity/Name | `VPixelSolues.CadencePomodoro` |
-| Pacote a enviar | `dist/Cadence-0.1.0.appx` |
+| Pacote a enviar | `dist/Cadence-0.2.0.appx` |
 
 ---
 
@@ -55,7 +55,10 @@ compras, anúncios, rede, localização nem coleta de dados — as respostas sã
 
 ## Pacotes
 
-Envie `dist/Cadence-0.1.0.appx` (132,8 MB), arquitetura x64.
+Envie `dist/Cadence-0.2.0.appx`, arquitetura x64.
+
+A versão do pacote precisa ser **maior que a já publicada**. O quarto número
+fica em zero: `0.2.0.0`.
 
 ---
 
@@ -70,7 +73,7 @@ Cadence Pomodoro
 ### Descrição curta
 
 ```
-Dois relógios: um ciclo de foco que você inicia e um lembrete de beber água e levantar que roda sozinho o dia inteiro.
+Dois relógios independentes: um ciclo de foco que você inicia e um lembrete de beber água e levantar que roda sozinho — e que você desliga quando quiser.
 ```
 
 ### Descrição
@@ -80,7 +83,7 @@ O Cadence dá ritmo ao seu dia de trabalho com dois relógios que funcionam sepa
 
 O primeiro é o ciclo de foco: 25 minutos de trabalho seguidos de uma pausa, no modelo Pomodoro. O segundo é um lembrete de água e movimento, que avisa a cada 55 minutos para você beber água e levantar da cadeira.
 
-O segundo não depende do primeiro. Mesmo num dia em que você não usar o cronômetro nenhuma vez — e esses são justamente os dias mais corridos — o lembrete de levantar continua chegando.
+O segundo não depende do primeiro. Mesmo num dia em que você não usar o cronômetro nenhuma vez — e esses são justamente os dias mais corridos — o lembrete de levantar continua chegando. E num dia de reunião atrás de reunião, um interruptor o desliga por completo.
 
 NENHUMA FASE COMEÇA SOZINHA
 
@@ -95,7 +98,7 @@ O lembrete também não insiste: se você ignorar, ele repete uma única vez dez
 O QUE VOCÊ ENCONTRA
 
 • Ciclo de foco de 25 minutos, com pausa curta de 5 e pausa longa de 15 a cada 4 ciclos concluídos no dia
-• Lembrete de água e movimento a cada 55 minutos, independente do foco
+• Lembrete de água e movimento a cada 55 minutos, independente do foco, que você liga e desliga quando quiser
 • Botão para concluir um ciclo antes do tempo, que conta, e botão para zerar, que não conta
 • Calendário mensal com quantos ciclos você concluiu em cada dia
 • Três sons de aviso à escolha, incluindo o sino do pomodoro clássico
@@ -115,7 +118,9 @@ O Cadence não tem conta, não pede cadastro e não acessa a internet. Suas pref
 ### Novidades nesta versão
 
 ```
-Primeira versão pública.
+O lembrete de água e movimento agora liga e desliga por um interruptor, em Configurações › Lembretes. Ele continua ligado por padrão, e o intervalo em minutos fica guardado mesmo com o lembrete desligado — ao religar, a contagem começa do zero.
+
+A janela ficou um pouco mais alta para que nenhuma aba das configurações precise de barra de rolagem, e a seção "Sobre" ficou só com a versão e o desenvolvedor.
 ```
 
 ### Recursos do aplicativo
@@ -124,7 +129,7 @@ Um por linha, no campo correspondente:
 
 ```
 Ciclo de foco Pomodoro de 25 minutos com pausa curta e pausa longa
-Lembrete de água e movimento independente do cronômetro
+Lembrete de água e movimento independente do cronômetro, que liga e desliga
 Calendário mensal de ciclos concluídos
 Pausa automática quando você se afasta do computador
 Três sons de aviso e durações configuráveis
@@ -164,7 +169,7 @@ Até 200 caracteres cada, na ordem em que as imagens aparecem:
 
 1. `O cronômetro de foco pronto para começar. O lembrete de água corre em paralelo, no alto da janela.`
 2. `Durante o foco, o anel mostra quanto do ciclo já passou. Concluir antes do tempo conta; zerar, não.`
-3. `O lembrete de água roda sozinho, pausa quando você se afasta e tem três sons à escolha. As mudanças salvam na hora.`
+3. `O lembrete de água liga e desliga por um interruptor, roda sozinho e pausa quando você se afasta. As mudanças salvam na hora.`
 4. `O calendário mostra quantos ciclos de foco você concluiu em cada dia do mês.`
 
 ---

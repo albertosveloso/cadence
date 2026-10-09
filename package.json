@@ -1,6 +1,6 @@
 {
   "name": "cadence",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ritmo para o dia de trabalho: ciclo de foco e lembrete de movimento, na bandeja do Windows.",
   "main": "./out/main/index.js",
   "author": "VPixel",

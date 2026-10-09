@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { readAppId, readDeveloper, readDisplayNames } from './scripts/app-id.mjs'
+import { readAppId, readDeveloper } from './scripts/app-id.mjs'
 
 const shared = resolve(__dirname, 'src/shared')
 
@@ -25,8 +25,7 @@ export default defineConfig({
     resolve: { alias: { '@shared': shared } },
     define: {
       __APP_ID__: JSON.stringify(appId),
-      __APP_DEVELOPER__: JSON.stringify(readDeveloper()),
-      __APP_NAMES__: JSON.stringify(readDisplayNames())
+      __APP_DEVELOPER__: JSON.stringify(readDeveloper())
     },
     build: { minify: 'esbuild' }
   },

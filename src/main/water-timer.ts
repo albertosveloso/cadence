@@ -31,7 +31,10 @@ const PRESENCE_GRACE_SECONDS = 60
 
 export type WaterEvent = { type: 'remind'; repeat: boolean }
 
-type SettingsProvider = () => Pick<Settings, 'waterIntervalMinutes' | 'idleThresholdMinutes'>
+type SettingsProvider = () => Pick<
+  Settings,
+  'waterEnabled' | 'waterIntervalMinutes' | 'idleThresholdMinutes'
+>
 
 let readSettings: SettingsProvider = () => DEFAULT_SETTINGS
 
@@ -76,8 +79,31 @@ export function startWaterTimer(now: number): void {
   deadlineMs = now + remainingMs
 }
 
-/** Reconhecimento: reinicia o intervalo cheio. */
+/**
+ * Ligado ou desligado nas configuracoes.
+ *
+ * Desligar nao congela: zera. Religar comeca um intervalo CHEIO, e nao o
+ * restante de antes -- quem desligou para uma reuniao de duas horas nao pode
+ * ser cobrado no minuto seguinte ao religar.
+ *
+ * Chamado tambem no bootstrap, para que um settings.json com o lembrete
+ * desligado nao faca o relogio correr ate o primeiro tick perceber.
+ */
+export function setWaterEnabled(enabled: boolean, now: number): void {
+  if (enabled) {
+    startWaterTimer(now)
+    return
+  }
+  status = 'off'
+  remainingMs = 0
+  deadlineMs = 0
+  anchorMs = 0
+  frozenBy = null
+}
+
+/** Reconhecimento: reinicia o intervalo cheio. Desligado, nao ha o que atender. */
 export function acknowledgeWater(now: number): void {
+  if (!readSettings().waterEnabled) return
   startWaterTimer(now)
 }
 
@@ -100,7 +126,9 @@ function silence(now: number): void {
 }
 
 function freeze(reason: 'idle' | 'sleep', now: number): void {
-  if (frozenBy) return
+  // Desligado ja esta parado. Congelar aqui trocaria 'off' por 'suspended' e
+  // faria a interface anunciar uma espera por inatividade que nao existe.
+  if (frozenBy || status === 'off') return
   remainingMs = Math.max(0, deadlineMs - now)
   frozenBy = reason
   frozenAt = now
@@ -142,6 +170,20 @@ function thaw(now: number, thresholdSeconds: number): void {
  *   5 min virar 5 s.
  */
 export function tickWater(now: number, idleSeconds: number): void {
+  // Desligado nas configuracoes: o relogio nao corre e nada fica pendente.
+  // Afirmado a cada tick, e nao so na troca, para que um settings.json
+  // editado a mao tambem seja obedecido.
+  if (!readSettings().waterEnabled) {
+    status = 'off'
+    remainingMs = 0
+    return
+  }
+
+  // Religado sem passar pelas configuracoes -- settings.json editado a mao com
+  // o app vivo. Sem isto o alvo continuaria zerado e nada dispararia nunca,
+  // porque 'off' nao casa com nenhum ramo da maquina abaixo.
+  if (status === 'off') startWaterTimer(now)
+
   const thresholdSeconds = readSettings().idleThresholdMinutes * 60
 
   if (idleSeconds >= thresholdSeconds) {

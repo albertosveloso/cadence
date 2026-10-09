@@ -28,6 +28,18 @@ export interface Settings {
   breakMinutes: number
   /** Duracao da pausa longa, a cada LONG_BREAK_EVERY ciclos do dia. */
   longBreakMinutes: number
+  /**
+   * Lembrete de agua e movimento ligado.
+   *
+   * Desligar PARA o segundo relogio; nao o esconde apenas. Religar comeca um
+   * intervalo cheio -- quem desligou para uma reuniao de duas horas nao pode
+   * ser cobrado no minuto seguinte ao religar.
+   *
+   * O intervalo em minutos continua existindo e editavel com o lembrete
+   * desligado: o valor e a preferencia da pessoa, e desligar por uma tarde
+   * nao e motivo para perde-lo.
+   */
+  waterEnabled: boolean
   /** Intervalo do lembrete de agua e movimento, em minutos. */
   waterIntervalMinutes: number
   /** Ociosidade (sem mouse/teclado) que suspende o lembrete, em minutos. */
@@ -57,6 +69,10 @@ export const DEFAULT_SETTINGS: Settings = {
   focusMinutes: 25,
   breakMinutes: 5,
   longBreakMinutes: 15,
+  // Ligado na instalacao: o lembrete independente e metade do produto, e os
+  // dias em que a pessoa nao abre o cronometro sao justamente os dias em que
+  // levantar da cadeira faz mais falta.
+  waterEnabled: true,
   waterIntervalMinutes: 55,
   idleThresholdMinutes: 10,
   theme: 'system',
@@ -107,8 +123,12 @@ export interface FocusState {
  * `fired` = disparou e aguarda reconhecimento.
  * `repeated` = ja repetiu uma vez (secao 5.2: exatamente uma repeticao).
  * `suspended` = suspenso por ociosidade (secao 5.3).
+ * `off` = desligado pelo usuario nas configuracoes.
+ *
+ * `off` e estado, nao ausencia de estado: a interface precisa distinguir
+ * "o lembrete esta desligado" de "o lembrete ainda nao carregou".
  */
-export type WaterStatus = 'waiting' | 'fired' | 'repeated' | 'suspended'
+export type WaterStatus = 'waiting' | 'fired' | 'repeated' | 'suspended' | 'off'
 
 export interface WaterState {
   status: WaterStatus
@@ -168,23 +188,19 @@ export const CHANNELS = {
 } as const
 
 /**
- * Identificacao do app e do ambiente em que ele roda, para a tela "Sobre".
+ * Versao e autoria, para a tela "Sobre".
  *
  * Consultada uma unica vez: nada aqui muda durante a execucao, e por isso nao
  * viaja no snapshot de 1 Hz.
+ *
+ * Carregou tambem o nome exibido, o identificador do pacote, o formato de
+ * empacotamento e as versoes de Electron, Chromium e Node. Nada disso era
+ * mostrado a quem usa o app sem custo de espaco, e o contrato acompanha a
+ * tela: campo que ninguem desenha e campo que ninguem mantem.
  */
 export interface AboutInfo {
-  /** Nome exibido. Difere entre NSIS e MSIX -- ver `displayName` no appx. */
-  name: string
   version: string
   developer: string
-  /** Reverse-DNS do pacote; util quando o usuario reporta um problema. */
-  appId: string
-  /** 'msix' na versao da Microsoft Store, 'nsis' na instalada pelo .exe. */
-  packaging: 'msix' | 'nsis'
-  electron: string
-  chromium: string
-  node: string
 }
 
 /** Superficie exposta em `window.cadence`. */

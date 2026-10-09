@@ -39,28 +39,6 @@ export function readDeveloper() {
   return match[1]
 }
 
-/**
- * Os dois nomes que o usuario ve, ambos de electron-builder.yml.
- *
- * NAO use app.getName() para isso: ele devolve o campo `name` do package.json
- * ("cadence", minusculo), nao o productName. E app.setName() nao e alternativa,
- * porque antes do ready ele muda o caminho de userData e levaria embora as
- * preferencias e o historico de quem ja tem o app instalado.
- *
- *   product  productName  -> "Cadence", a instalacao por .exe
- *   msix     appx.displayName -> o nome reservado na Store, que precisa ser
- *            diferente quando o nome curto nao estava disponivel
- */
-export function readDisplayNames() {
-  const yml = readFileSync(CONFIG, 'utf8')
-  const product = yml.match(/^productName:[ 	]*(.+?)[ 	]*$/m)
-  const msix = yml.match(/^[ 	]*displayName:[ 	]*['"]?(.+?)['"]?[ 	]*$/m)
-  if (!product) {
-    throw new Error('productName nao encontrado em electron-builder.yml')
-  }
-  return { product: product[1], msix: msix ? msix[1] : product[1] }
-}
-
 export function isPlaceholder(appId) {
   return appId.startsWith(PLACEHOLDER_PREFIX)
 }

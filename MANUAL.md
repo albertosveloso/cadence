@@ -11,7 +11,7 @@ O segundo não depende do primeiro. Mesmo num dia em que você não usar o cron�
 
 ## Instalar
 
-1. Dê **dois cliques** em `Cadence-Setup-0.1.0.exe`.
+1. Dê **dois cliques** em `Cadence-Setup-0.2.0.exe`.
 2. Pronto. Não há perguntas, não há escolha de pasta, e o Windows não pede senha de administrador.
 
 Em cerca de 15 segundos o app instala e abre sozinho.
@@ -30,7 +30,7 @@ Da esquerda para a direita, de cima para baixo:
 
 | O que você vê | O que é |
 |---|---|
-| **Água em 55 min** | O segundo relógio. Clique para dizer que já bebeu e reiniciar a contagem |
+| **Água em 55 min** | O segundo relógio. Clique para dizer que já bebeu e reiniciar a contagem. Some da janela se você desligar o lembrete |
 | **⚙** | Configurações |
 | **✕** | Esconde na bandeja. O app continua rodando |
 | **Círculo grande** | O tempo que falta na fase atual. A borda se preenche conforme passa |
@@ -73,7 +73,7 @@ A contagem é do dia todo, não de quatro seguidos sem parar — e ela zera sozi
 
 ## O lembrete de água e movimento
 
-A cada 55 minutos o Cadence avisa para você beber água e levantar.
+A cada 55 minutos o Cadence avisa para você beber água e levantar. Ele vem **ligado** e pode ser desligado a qualquer momento em **Configurações › Lembretes**.
 
 - Se você ignorar, ele **repete uma vez** 10 minutos depois.
 - Se ignorar de novo, ele se cala até o próximo intervalo. Ele não fica insistindo.
@@ -82,6 +82,16 @@ A cada 55 minutos o Cadence avisa para você beber água e levantar.
 **Ele sabe quando você não está.** Se ficar 10 minutos sem mexer no mouse nem no teclado, o lembrete pausa. Quando você volta, a contagem **recomeça do zero** — porque ficar esse tempo longe já foi levantar, que era o pedido dele.
 
 E se o momento do aviso chegar quando você não está na frente do computador, ele espera você voltar em vez de avisar para a cadeira vazia.
+
+### Desligar por um tempo
+
+Em dias de reunião atrás de reunião, desligue o **Lembrete de água e movimento** em **Configurações › Lembretes**. Com ele desligado:
+
+- nada é avisado, e o relógio de água some do alto da janela;
+- o intervalo em minutos **continua guardado** — desligar por uma tarde não faz você perder o valor que escolheu;
+- ao religar, a contagem **começa do zero**, com o intervalo cheio. Você não é cobrado no minuto seguinte por tempo que passou com o lembrete desligado.
+
+O ciclo de foco não é afetado: os dois relógios continuam independentes.
 
 ---
 
@@ -117,7 +127,8 @@ A duração que você mudar vale a partir da **próxima fase que iniciar**. O ci
 
 | Ajuste | Padrão | Para que serve |
 |---|---|---|
-| Água e movimento | 55 min | De quanto em quanto tempo o lembrete chega |
+| Lembrete de água e movimento | ligado | Liga e desliga o segundo relógio. Desligado, nada é avisado |
+| Intervalo | 55 min | De quanto em quanto tempo o lembrete chega |
 | Suspender após inatividade | 10 min | Quanto tempo sem mexer no computador para o app entender que você saiu |
 | Som nas notificações | ligado | |
 | Som do aviso | Windows | **Windows**, **Sino** (o despertador de cozinha do pomodoro clássico) ou **Suave** |
@@ -139,7 +150,7 @@ O Cadence fica ao lado do relógio do Windows, mesmo com a janela fechada.
 
 - **Clique esquerdo:** mostra ou esconde a janela.
 - **Passe o mouse:** mostra a fase e o tempo que falta.
-- **Clique direito:** abre o menu com tudo — iniciar, pausar, zerar, "já bebi água", configurações, iniciar com o Windows e **Sair**.
+- **Clique direito:** abre o menu com tudo — iniciar, pausar, zerar, "já bebi água", configurações, iniciar com o Windows e **Sair**. Com o lembrete de água desligado, o menu diz "Água: lembrete desligado" e o "já bebi água" sai de lá.
 
 ---
 

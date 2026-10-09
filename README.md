@@ -182,7 +182,7 @@ Duas armadilhas que valem estar escritas:
 ## Pacote MSIX (Microsoft Store)
 
 ```bash
-npm run dist:msix     # dist/Cadence-0.1.0.appx — 132,8 MB
+npm run dist:msix     # dist/Cadence-0.2.0.appx
 ```
 
 O alvo `appx` **não** está em `win.target`, de propósito: listado ali, `npm run dist` reconstruiria também o instalador NSIS, e o `.exe` atual é o que está publicado na release, com hash conhecido. O MSIX sai por um script próprio, que passa o alvo pela linha de comando.
@@ -292,7 +292,7 @@ Sem essas variáveis o electron-builder produz um instalador **não assinado** e
 Conferir depois de gerar:
 
 ```powershell
-Get-AuthenticodeSignature .\dist\Cadence-Setup-0.1.0.exe
+Get-AuthenticodeSignature .\dist\Cadence-Setup-0.2.0.exe
 ```
 
 > No electron-builder 26 as opções de signtool ficam sob `win.signtoolOptions`. O site electron.build já documenta a v27 (alpha), onde isso foi substituído por uma união `win.sign` — colar aquele bloco aqui faz com que ele seja **ignorado em silêncio** e você publica um instalador sem assinatura.
@@ -315,10 +315,11 @@ Os 11 critérios de aceitação do §9, mais o que este projeto acrescentou.
 - Persistência sobrevive ao ciclo gravar → reiniciar → ler; JSON corrompido, tipo errado e valor fora de faixa caem em default ou no limite, sem derrubar o app (§5.5)
 - A gravação acontece pelo debounce de 300 ms, **sem depender de encerramento gracioso** — um app de bandeja pode ser morto pelo Gerenciador de Tarefas, e nesse caminho `before-quit` não roda
 - Etiquetas de tooltip e menu da bandeja em todos os estados (§9, critério 3)
+- O lembrete **desligado** não conta, não dispara e não vira `suspended` por inatividade nem por sono da máquina; religar começa um intervalo cheio, não o restante de antes
 
 **Verificado no app rodando:**
 
-- Ícone na bandeja, janela sem moldura com cantos arredondados, 400×452 exatos
+- Ícone na bandeja, janela sem moldura com cantos arredondados, 400×500 exatos
 - Cronômetro, anel com gradiente, traços de ciclo e contador do dia
 - Configurações nas três abas, tema claro e escuro
 - `settings.json` lido no boot, com valor fora de faixa limitado de ponta a ponta

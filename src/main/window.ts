@@ -21,7 +21,16 @@ import { join } from 'node:path'
  */
 
 const WIDTH = 400
-const HEIGHT = 452
+/**
+ * Altura medida, nao escolhida: e a da aba mais alta das configuracoes
+ * ("Lembretes") com folga, para que nenhum painel precise de barra de
+ * rolagem. A 452 px, que era o valor anterior, aquela aba transbordava 43 px
+ * depois que o lembrete de agua ganhou seu interruptor.
+ *
+ * Mudou alguma aba? Meca de novo em vez de estimar: scrollHeight do painel
+ * contra clientHeight, com a janela no tamanho real.
+ */
+const HEIGHT = 500
 
 let window: BrowserWindow | null = null
 

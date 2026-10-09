@@ -5,6 +5,7 @@ import {
   getWaterState,
   onWaterEvent,
   resumeWaterFromSleep,
+  setWaterEnabled,
   setWaterSettingsProvider,
   startWaterTimer,
   suspendWater,
@@ -26,7 +27,7 @@ const ACTIVE = 0 // ociosidade em segundos: usuario presente
 /** Base fixa, 03/09/2026 09:00 local. Nenhum teste depende do relogio real. */
 const T0 = new Date(2026, 8, 3, 9, 0, 0).getTime()
 
-let settings = { waterIntervalMinutes: 55, idleThresholdMinutes: 5 }
+let settings = { waterEnabled: true, waterIntervalMinutes: 55, idleThresholdMinutes: 5 }
 
 function advance(from: number, ms: number, idleSeconds = ACTIVE): number {
   let now = from
@@ -43,7 +44,7 @@ describe('lembrete de agua e movimento (secoes 5.2 e 5.3)', () => {
   let off: () => void
 
   beforeEach(() => {
-    settings = { waterIntervalMinutes: 55, idleThresholdMinutes: 5 }
+    settings = { waterEnabled: true, waterIntervalMinutes: 55, idleThresholdMinutes: 5 }
     setWaterSettingsProvider(() => settings)
     events = []
     off?.()
@@ -188,6 +189,85 @@ describe('lembrete de agua e movimento (secoes 5.2 e 5.3)', () => {
     assert.equal(events.length, 0)
     advance(wakeAt + 54 * MINUTE, 1 * MINUTE)
     assert.equal(events.length, 1, 'intervalo cheio ao acordar')
+  })
+
+  it('desligado, nao conta nem dispara', () => {
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, T0)
+    assert.equal(getWaterState().status, 'off')
+    assert.equal(getWaterState().remainingMs, 0)
+
+    // Um dia inteiro de trabalho: nenhum aviso.
+    advance(T0, 8 * 60 * MINUTE)
+    assert.equal(events.length, 0)
+    assert.equal(getWaterState().status, 'off')
+  })
+
+  it('desligado com um lembrete pendente, o pendente some', () => {
+    const now = advance(T0, 55 * MINUTE)
+    assert.equal(getWaterState().status, 'fired')
+
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, now)
+    assert.equal(getWaterState().status, 'off')
+
+    // A repeticao de 10 min nao pode sobreviver ao desligamento.
+    advance(now, 30 * MINUTE)
+    assert.equal(events.length, 1)
+  })
+
+  it('religar comeca um intervalo CHEIO, nao o restante de antes', () => {
+    let now = advance(T0, 50 * MINUTE) // faltavam 5 min
+
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, now)
+    now = advance(now, 120 * MINUTE)
+
+    settings = { ...settings, waterEnabled: true }
+    setWaterEnabled(true, now)
+    assert.equal(getWaterState().status, 'waiting')
+
+    advance(now, 54 * MINUTE)
+    assert.equal(events.length, 0, 'nao cobra os 5 min que faltavam antes de desligar')
+    advance(now + 54 * MINUTE, 1 * MINUTE)
+    assert.equal(events.length, 1, 'intervalo cheio a partir do religamento')
+  })
+
+  it('desligado, a ociosidade nao troca o estado por "suspended"', () => {
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, T0)
+
+    advance(T0, 30 * MINUTE, 6 * 60)
+    assert.equal(getWaterState().status, 'off', 'desligado nao e "em espera por inatividade"')
+
+    suspendWater(T0 + 30 * MINUTE)
+    assert.equal(getWaterState().status, 'off', 'dormir tambem nao muda o desligado')
+  })
+
+  it('desligado, reconhecer nao religa o relogio', () => {
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, T0)
+
+    acknowledgeWater(T0)
+    assert.equal(getWaterState().status, 'off')
+
+    advance(T0, 60 * MINUTE)
+    assert.equal(events.length, 0)
+  })
+
+  it('settings.json editado a mao com o app vivo religa no proximo tick', () => {
+    settings = { ...settings, waterEnabled: false }
+    setWaterEnabled(false, T0)
+
+    // Sem passar por setWaterEnabled: so o arquivo mudou.
+    settings = { ...settings, waterEnabled: true }
+
+    // O rearme acontece no primeiro tick depois da edicao, entao o intervalo
+    // cheio corre a partir de T0 + 1 s -- dai a margem de 2 min abaixo.
+    const now = advance(T0, 54 * MINUTE)
+    assert.equal(events.length, 0)
+    advance(now, 2 * MINUTE)
+    assert.equal(events.length, 1, 'rearma com o intervalo cheio em vez de travar em zero')
   })
 
   it('alterar o intervalo preserva o tempo ja decorrido', () => {

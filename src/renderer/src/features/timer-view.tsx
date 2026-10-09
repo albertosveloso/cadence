@@ -72,25 +72,33 @@ export function TimerView({ snapshot, onOpenSettings, onOpenCalendar }: TimerVie
       {/* Cabeçalho: o segundo relógio à esquerda, controles de app à direita.
           O rodapé fica só com os controles do ciclo. */}
       <header className="drag-region relative flex items-start justify-between px-5 pt-4">
-        <button
-          type="button"
-          onClick={() => window.cadence.water.acknowledge()}
-          title={waterPending ? 'Marcar como atendido' : 'Reiniciar o intervalo agora'}
-          className={cn(
-            'no-drag flex items-center gap-1.5 rounded-full px-2 py-1 text-[12px] font-medium transition-colors',
-            'hover:bg-accent',
-            waterPending ? 'text-phase-water' : 'text-muted-foreground'
-          )}
-        >
-          <Droplet className={cn('size-3.5', waterPending && 'animate-pulse')} />
-          <span>
-            {water.status === 'suspended'
-              ? 'Água: em espera'
-              : waterPending
-                ? 'Beba água e levante'
-                : `Água ${formatMinutesAway(water.remainingMs)}`}
-          </span>
-        </button>
+        {/* Desligado nas configuracoes, o segundo relogio sai da janela: um
+            botao que anuncia o proprio desligamento o dia inteiro cobra
+            atencao por uma escolha que o usuario ja fez. O espacador mantem
+            os controles da direita no lugar. */}
+        {water.status === 'off' ? (
+          <span aria-hidden="true" />
+        ) : (
+          <button
+            type="button"
+            onClick={() => window.cadence.water.acknowledge()}
+            title={waterPending ? 'Marcar como atendido' : 'Reiniciar o intervalo agora'}
+            className={cn(
+              'no-drag flex items-center gap-1.5 rounded-full px-2 py-1 text-[12px] font-medium transition-colors',
+              'hover:bg-accent',
+              waterPending ? 'text-phase-water' : 'text-muted-foreground'
+            )}
+          >
+            <Droplet className={cn('size-3.5', waterPending && 'animate-pulse')} />
+            <span>
+              {water.status === 'suspended'
+                ? 'Água: em espera'
+                : waterPending
+                  ? 'Beba água e levante'
+                  : `Água ${formatMinutesAway(water.remainingMs)}`}
+            </span>
+          </button>
+        )}
 
         <div className="flex items-center gap-0.5">
           <Button
